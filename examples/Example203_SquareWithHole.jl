@@ -1,46 +1,37 @@
 #= 
 
-# 203: Square with hole via GridBuilder
+# 203: Square with hole
 ([source code](SOURCE_URL))
 
 =#
 
 module Example203_SquareWithHole
-using SimplexGridFactory
 using ExtendableGrids
+using SimplexGridFactory
 
-function main(;Plotter=nothing)
+function main(;plotter=nothing)
+
+    function unsuitable(x1,y1,x2,y2,x3,y3, area)
+        bary_x=x1+x2+x3
+        bary_y=y2+y2+y3
+        if area > 0.001*bary_x
+            return 1
+        else
+            return 0
+        end
+    end
     
-    builder=SimplexGridBuilder(dim_space=2)
-    p1=point!(builder,0,0)
-    p2=point!(builder,1,0)
-    p3=point!(builder,1,1)
-    p4=point!(builder,0,1)
-    facet!(builder,p1,p2,region=1)
-    facet!(builder,p2,p3,region=2)
-    facet!(builder,p3,p4,region=3)
-    facet!(builder,p4,p1,region=4)
+    grid=simplexgrid(points=[0 0 ; 0 1 ; 1 1 ; 1 0; 0.3 0.3 ; 0.3 0.7 ; 0.7 0.7  ; 0.7 0.3]',
+                     bfaces=[1 2 ; 2 3 ; 3 4 ; 4 1 ; 5 6 ; 6 7; 7 8; 8 5]',
+                     bfaceregions=[1, 2, 3, 4,5,5,5,5],
+                     regionpoints=[0.25 0.25;0.5 0.5]',
+                     regionnumbers=[1, 0],
+                     regionvolumes=[0.01, 1],
+                     flags="pAaqQD")
 
-
-    h1=point!(builder,0.3, 0.3)
-    h2=point!(builder,0.3, 0.7)
-    h3=point!(builder,0.7, 0.7)
-    h4=point!(builder,0.7, 0.3)
-
-    facet!(builder,h1,h2,region=5)
-    facet!(builder,h2,h3,region=5)
-    facet!(builder,h3,h4,region=5)
-    facet!(builder,h4,h1,region=5)
-
-    hole!(builder, 0.5, 0.5)
-    cellregion!(builder,0.25,0.25,region=1,volume=0.01)
-
-    grid=simplexgrid(builder)
-    
-    plot(grid,Plotter=Plotter)
+    ExtendableGrids.plot(grid,Plotter=plotter)
     (num_nodes(grid),num_cells(grid),num_bfaces(grid))
 end
-
 function test()
     main()==(93, 139, 47)
 end
