@@ -7,13 +7,17 @@ using InteractiveUtils
 # ╔═╡ d432ad64-f91f-11ea-2e48-4bc7472ac64c
 begin
 	using Pkg
-	Pkg.develop("ExtendableGrids")
+	Pkg.add("ExtendableGrids")
+	Pkg.develop("SimplexGridFactory")
 	Pkg.add("PyPlot")
 	Pkg.add("PlutoUI")	
 end
 
 # ╔═╡ 07ebc9c4-f920-11ea-2545-111b1a4b25b3
-using PyPlot, ExtendableGrids,PlutoUI
+using ExtendableGrids, SimplexGridFactory,PlutoUI
+
+# ╔═╡ dd6db2de-fdd9-11ea-28c2-9d6b947114dc
+import PyPlot
 
 # ╔═╡ 4926eca8-fb6d-11ea-15a0-6fbe372acc98
 with_terminal() do
@@ -36,7 +40,7 @@ triangleflags()
 
 # ╔═╡ 511b26c6-f920-11ea-1228-51c3750f495c
 begin
-	global factory=GridFactory(flags=triangleflags(:domain))
+	global factory=SimplexGridBuilder(flags=triangleflags(:domain))
 	p1=point!(factory,(0,0))
 	p2=point!(factory,(1,0))
 	p3=point!(factory,(1,1))
@@ -63,6 +67,7 @@ ExtendableGrids.plot(factory,Plotter=PyPlot,resolution=(600,600))
 # ╔═╡ Cell order:
 # ╠═d432ad64-f91f-11ea-2e48-4bc7472ac64c
 # ╠═07ebc9c4-f920-11ea-2545-111b1a4b25b3
+# ╠═dd6db2de-fdd9-11ea-28c2-9d6b947114dc
 # ╟─4926eca8-fb6d-11ea-15a0-6fbe372acc98
 # ╠═3e177bd8-fbeb-11ea-0c9c-c9161a2d36d4
 # ╟─f32d9f04-f923-11ea-3a4a-53cc3df5642c

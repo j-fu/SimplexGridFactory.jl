@@ -1,5 +1,3 @@
-#=
-
 """
 $(SIGNATURES)
 
@@ -7,7 +5,7 @@ Two panel plot of gridfactory.
 
 
 """
-plot!(ctx::PlotterContext,gf::SimplexGridBuilder;kwargs...)=plot!(update_context!(ctx,kwargs),ctx[:backend],gf)
+ExtendableGrids.plot!(ctx::PlotterContext,gf::SimplexGridBuilder;kwargs...)=plot!(ExtendableGrids.update_context!(ctx,kwargs),ctx[:backend],gf)
 
 
 """
@@ -17,20 +15,13 @@ Two panel plot of gridfactory with input and resulting grid
 
 
 """
-plot(gf::SimplexGridBuilder;Plotter=nothing,kwargs...)=plot!(update_context!(PlotterContext(Plotter),kwargs),gf)
+ExtendableGrids.plot(gf::SimplexGridBuilder;Plotter=nothing,kwargs...)=plot!(ExtendableGrids.update_context!(PlotterContext(Plotter),kwargs),gf)
 
 
-function plot!(ctx, ::Type{PyPlotType}, gf::SimplexGridBuilder)
-PyPlot=ctx[:Plotter]
-prepare_figure!(ctx)
-=#
-
-function plot!(gf::SimplexGridBuilder, Plotter=nothing)
-    _ispyplot(Plotter)= (typeof(Plotter)==Module)&&isdefined(Plotter,:Gcf)
-    if !_ispyplot(Plotter)
-        return nothing
-    end
-
+# dispatched version
+function ExtendableGrids.plot!(ctx, ::Type{PyPlotType}, gf::SimplexGridBuilder)
+    PyPlot=ctx[:Plotter]
+    ExtendableGrids.prepare_figure!(ctx)
     triin=nothing
     try
         triin=triangulateio(gf)

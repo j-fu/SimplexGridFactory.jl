@@ -3,7 +3,7 @@ $(TYPEDSIGNATURES)
 
 Create Grid from Triangle input data.
 """
-function proto_simplexgrid(flags::String, input::Triangulate.TriangulateIO;unsuitable=nothing)
+function ExtendableGrids.simplexgrid(flags::String, input::Triangulate.TriangulateIO;unsuitable=nothing)
 
     if typeof(unsuitable)!=Nothing
         triunsuitable(unsuitable)
@@ -33,12 +33,12 @@ function proto_simplexgrid(flags::String, input::Triangulate.TriangulateIO;unsui
         segmentmarkerlist=Array{Int32,2}(segmentmarkerlist)
     end
 
-    simplexgrid(pointlist,trianglelist,cellregions,segmentlist,segmentmarkerlist)
+    ExtendableGrids.simplexgrid(pointlist,trianglelist,cellregions,segmentlist,segmentmarkerlist)
 end
 
 """
 ````
-function proto_simplexgrid(;flags::String="pAaqDQ",
+function simplexgrid(;flags::String="pAaqDQ",
                      points=Array{Cdouble,2}(undef,0,0),
                      bfaces=Array{Cint,2}(undef,0,0),
                      bfaceregions=Array{Cint,1}(undef,0),
@@ -56,7 +56,7 @@ This conversion is not performed if the data types are thos
 indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
 """
-function proto_simplexgrid(;flags::String="pAaqDQ",
+function ExtendableGrids.simplexgrid(;flags::String="pAaqDQ",
                      points=Array{Cdouble,2}(undef,0,0),
                      bfaces=Array{Cint,2}(undef,0,0),
                      bfaceregions=Array{Cint,1}(undef,0),
@@ -73,7 +73,7 @@ function proto_simplexgrid(;flags::String="pAaqDQ",
                       regionnumbers=regionnumbers,
                       regionvolumes=regionvolumes)
     
-    proto_simplexgrid(flags,tio,unsuitable=unsuitable)
+    ExtendableGrids.simplexgrid(flags,tio,unsuitable=unsuitable)
 end
 
 function triangulateio(;flags::String="pAaqDQ",

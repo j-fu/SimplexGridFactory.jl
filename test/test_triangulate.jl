@@ -1,4 +1,5 @@
 module test_triangulate
+using SimplexGridFactory
 using ExtendableGrids
 using Triangulate
 

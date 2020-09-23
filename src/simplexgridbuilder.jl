@@ -1,3 +1,8 @@
+"""
+$(TYPEDEF)
+
+Simplex grid builder.
+"""
 mutable struct SimplexGridBuilder
     current_facetregion::Cint
     flags::String
@@ -21,6 +26,14 @@ const _triangleflags=Dict(
 triangleflags(s::Symbol)=_triangleflags[s]
 triangleflags()=_triangleflags
 
+"""
+$(SIGNATURES)
+
+Possible Triangle flags:
+
+$(triangleflags())
+
+"""
 function SimplexGridBuilder(;dim_space=2,tol=1.0e-12,flags::String=triangleflags(:domain))
     this=SimplexGridBuilder(nothing)
     this.flags=flags
@@ -41,16 +54,16 @@ struct DimensionMismatchError <: Exception
 end
 
 """
-    $(TYPEDSIGNATURES)
+    $(SIGNATURES)
     Space dimension
 """
 ExtendableGrids.dim_space(this::SimplexGridBuilder)=size(this.points,1)
 
-ExtendableGrids.flags!(this::SimplexGridBuilder)=this.flags
-ExtendableGrids.flags!(this::SimplexGridBuilder,flags::String)=this.flags=flags
-ExtendableGrids.appendflags!(this::SimplexGridBuilder,flags::String)=this.flags*=flags
+flags(this::SimplexGridBuilder)=this.flags
+flags!(this::SimplexGridBuilder,flags::String)=this.flags=flags
+appendflags!(this::SimplexGridBuilder,flags::String)=this.flags*=flags
 
-ExtendableGrids.unsuitable!(this::SimplexGridBuilder,func::Function)= this.unsuitable=func
+unsuitable!(this::SimplexGridBuilder,func::Function)= this.unsuitable=func
 
 function findpoint(this::SimplexGridBuilder,x)
     if this.point_identity_tolerance<0.0
@@ -97,7 +110,7 @@ end
 findpoint(this::SimplexGridBuilder, p::Union{Array,Tuple})=point!(this,p...)
 
     
-function ExtendableGrids.point!(this::SimplexGridBuilder,x)
+function point!(this::SimplexGridBuilder,x)
     dim_space(this)==1||throw(DimensionMismatchError())
     p=findpoint(this,x)
     if p>0
@@ -107,7 +120,7 @@ function ExtendableGrids.point!(this::SimplexGridBuilder,x)
     size(this.points,2)
 end
 
-function ExtendableGrids.point!(this::SimplexGridBuilder,x,y)
+function point!(this::SimplexGridBuilder,x,y)
     dim_space(this)==2||throw(DimensionMismatchError())
     p=findpoint(this,x,y)
     if p>0
@@ -117,7 +130,7 @@ function ExtendableGrids.point!(this::SimplexGridBuilder,x,y)
     size(this.points,2)
 end
 
-function ExtendableGrids.point!(this::SimplexGridBuilder,x,y,z)
+function point!(this::SimplexGridBuilder,x,y,z)
     dim_space(this)==3||throw(DimensionMismatchError())
     p=findpoint(this,x,y,z)
     if p>0
@@ -127,11 +140,11 @@ function ExtendableGrids.point!(this::SimplexGridBuilder,x,y,z)
     size(this.points,2)
 end
 
-ExtendableGrids.point!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=point!(this,p...)
+point!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=point!(this,p...)
 
 
 
-function ExtendableGrids.cellregion!(this::SimplexGridBuilder,x;region=1,volume=1.0)
+function cellregion!(this::SimplexGridBuilder,x;region=1,volume=1.0)
     dim_space(this)==1||throw(DimensionMismatchError())
     append!(this.regionpoints,(x))
     push!(this.regionvolumes,volume)
@@ -139,14 +152,14 @@ function ExtendableGrids.cellregion!(this::SimplexGridBuilder,x;region=1,volume=
     region
 end
 
-function ExtendableGrids.cellregion!(this::SimplexGridBuilder,x,y;region=1,volume=1.0)
+function cellregion!(this::SimplexGridBuilder,x,y;region=1,volume=1.0)
     dim_space(this)==2||throw(DimensionMismatchError())
     append!(this.regionpoints,(x,y))
     push!(this.regionvolumes,volume)
     push!(this.regionnumbers,region)
 end
 
-function ExtendableGrids.cellregion!(this::SimplexGridBuilder,x,y,z;region=1,volume=1.0)
+function cellregion!(this::SimplexGridBuilder,x,y,z;region=1,volume=1.0)
     dim_space(this)==3||throw(DimensionMismatchError())
     append!(this.regionpoints,(x,y,z))
     push!(this.regionvolumes,volume)
@@ -154,43 +167,43 @@ function ExtendableGrids.cellregion!(this::SimplexGridBuilder,x,y,z;region=1,vol
     region
 end
 
-ExtendableGrids.cellregion!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1,volume=1.0)=cellregion!(this,p...,region=region,volume=volume)
+cellregion!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1,volume=1.0)=cellregion!(this,p...,region=region,volume=volume)
 
-ExtendableGrids.hole!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=cellregion!(this,p,region=0,volume=1)
-ExtendableGrids.hole!(this::SimplexGridBuilder, x)=cellregion!(this,x,region=0,volume=1)
-ExtendableGrids.hole!(this::SimplexGridBuilder, x,y)=cellregion!(this,x,y,region=0,volume=1)
-ExtendableGrids.hole!(this::SimplexGridBuilder, x,y,z)=cellregion!(this,x,y,z,region=0,volume=1)
+hole!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=cellregion!(this,p,region=0,volume=1)
+hole!(this::SimplexGridBuilder, x)=cellregion!(this,x,region=0,volume=1)
+hole!(this::SimplexGridBuilder, x,y)=cellregion!(this,x,y,region=0,volume=1)
+hole!(this::SimplexGridBuilder, x,y,z)=cellregion!(this,x,y,z,region=0,volume=1)
 
 
-function ExtendableGrids.facet!(this::SimplexGridBuilder,i;region=1)
+function facet!(this::SimplexGridBuilder,i;region=1)
     dim_space(this)==1||throw(DimensionMismatchError())
     push!(this.facets,[i])
     push!(this.facetregions,this.region)
     length(this.facets)
 end
 
-function ExtendableGrids.facet!(this::SimplexGridBuilder,i1,i2;region=1)
+function facet!(this::SimplexGridBuilder,i1,i2;region=1)
     dim_space(this)==2||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2])
     push!(this.facetregions,region)
     length(this.facets)
 end
 
-function ExtendableGrids.facet!(this::SimplexGridBuilder,i1,i2,i3;region=1)
+function facet!(this::SimplexGridBuilder,i1,i2,i3;region=1)
     dim_space(this)==3||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2,i3])
     push!(this.facetregions,region)
     length(this.facets)
 end
 
-function ExtendableGrids.facet!(this::SimplexGridBuilder,i1,i2,i3,i4;region=1)
+function facet!(this::SimplexGridBuilder,i1,i2,i3,i4;region=1)
     dim_space(this)==3||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2,i3,i4])
     push!(this.facetregions,region)
     length(this.facets)
 end
 
-function ExtendableGrids.facet!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1)
+function facet!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1)
     if dim_space(this)==1
         length(p)==1 || throw(DimensionMismatchError())
     end
@@ -213,14 +226,14 @@ function ExtendableGrids.simplexgrid(this::SimplexGridBuilder)
         facets[2,i]=this.facets[i][2]
     end
     
-    simplexgrid(flags=this.flags,
-                points=this.points,
-                bfaces=facets,
-                bfaceregions=this.facetregions,
-                regionpoints=this.regionpoints,
-                regionnumbers=this.regionnumbers,
-                regionvolumes=this.regionvolumes,
-                unsuitable=this.unsuitable)
+    ExtendableGrids.simplexgrid(flags=this.flags,
+                                points=this.points,
+                                bfaces=facets,
+                                bfaceregions=this.facetregions,
+                                regionpoints=this.regionpoints,
+                                regionnumbers=this.regionnumbers,
+                                regionvolumes=this.regionvolumes,
+                                unsuitable=this.unsuitable)
 end
 
 function triangulateio(this::SimplexGridBuilder)
