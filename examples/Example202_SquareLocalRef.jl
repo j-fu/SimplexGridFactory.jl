@@ -1,9 +1,8 @@
-#= 
+# 
+# # 202: Locally refined square
+# ([source code](SOURCE_URL))
+# 
 
-# 202: Locally refined square
-([source code](SOURCE_URL))
-
-=#
 
 module Example202_SquareLocalRef
 using ExtendableGrids

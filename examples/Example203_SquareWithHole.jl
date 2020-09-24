@@ -1,9 +1,8 @@
-#= 
+# 
+# # 203: Square with hole
+# ([source code](SOURCE_URL))
+# 
 
-# 203: Square with hole
-([source code](SOURCE_URL))
-
-=#
 
 module Example203_SquareWithHole
 using ExtendableGrids

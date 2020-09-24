@@ -20,9 +20,10 @@ function mkdocs()
     example_jl_dir = joinpath(@__DIR__,"..","examples")
     example_md_dir  = joinpath(@__DIR__,"src","examples")
 
+    generated_examples=[]
     for example_source in readdir(example_jl_dir)
         base,ext=splitext(example_source)
-        if ext==".jl"
+        if ext==".jl" && occursin("Example",base)
             source_url="https://github.com/j-fu/SimplexGridFactory.jl/raw/master/examples/"*example_source
             preprocess(buffer)=replace_source_url(buffer,source_url)
             Literate.markdown(joinpath(@__DIR__,"..","examples",example_source),
@@ -44,7 +45,8 @@ function mkdocs()
              repo="https://github.com/j-fu/SimplexGridFactory.jl",
              pages=[
                  "Home"=>"index.md",
-                 "Examples" => generated_examples
+                 "Examples" => generated_examples,
+                 "Pluto Notebook(s)" => "pluto.md"
              ])
 end
 

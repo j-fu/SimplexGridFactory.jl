@@ -1,7 +1,8 @@
 """
 $(TYPEDEF)
 
-Simplex grid builder.
+Simplex grid builder: wrapper around array based mesh generator interface.
+It allows build up the input data incrementally.
 """
 mutable struct SimplexGridBuilder
     current_facetregion::Cint
@@ -23,13 +24,31 @@ const _triangleflags=Dict(
     :pointset => "Q",
     :convex_hull => "cQ")
 
+"""
+$(TYPEDSIGNATURES)
+
+Return some standard triangle control flags.
+"""
 triangleflags(s::Symbol)=_triangleflags[s]
+
+"""
+$(TYPEDSIGNATURES)
+
+Return Dict with  possible standard triangle control flags.
+"""
 triangleflags()=_triangleflags
 
 """
 $(SIGNATURES)
 
-Possible Triangle flags:
+Create a SimplexGridBuilder.
+
+For the flags parameter
+see the  [short](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triangulate-Tuple{String,TriangulateIO})
+resp. [long](https://juliageometry.github.io/Triangulate.jl/stable/triangle-h/)  documentation of the Triangle
+control flags.
+
+Possible standard Triangle control flags:
 
 $(triangleflags())
 
@@ -54,18 +73,47 @@ struct DimensionMismatchError <: Exception
 end
 
 """
-    $(SIGNATURES)
+    $(TYPEDSIGNATURES)
     Space dimension
 """
 ExtendableGrids.dim_space(this::SimplexGridBuilder)=size(this.points,1)
 
+
+"""
+$(TYPEDSIGNATURES)
+ Current Triangle contol flags 
+"""
 flags(this::SimplexGridBuilder)=this.flags
+
+"""
+$(TYPEDSIGNATURES)
+ Set Triangle Control flags
+"""
 flags!(this::SimplexGridBuilder,flags::String)=this.flags=flags
+
+"""
+$(TYPEDSIGNATURES)
+ Set standard Triangle Control flags
+"""
+flags!(this::SimplexGridBuilder,flags::Symbol)=this.flags=_triangleflags[flags]
+
+
+"""
+$(TYPEDSIGNATURES)
+ Append flags to Triangle control flags
+"""
 appendflags!(this::SimplexGridBuilder,flags::String)=this.flags*=flags
 
+"""
+$(TYPEDSIGNATURES)
+
+Set unsuitable function, see
+[`triunsuitable`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triunsuitable-Tuple{Function}).
+
+"""
 unsuitable!(this::SimplexGridBuilder,func::Function)= this.unsuitable=func
 
-function findpoint(this::SimplexGridBuilder,x)
+function _findpoint(this::SimplexGridBuilder,x)
     if this.point_identity_tolerance<0.0
         return 0
     end
@@ -78,7 +126,7 @@ function findpoint(this::SimplexGridBuilder,x)
     return 0
 end
 
-function findpoint(this::SimplexGridBuilder,x,y)
+function _findpoint(this::SimplexGridBuilder,x,y)
     if this.point_identity_tolerance<0.0
         return 0
     end
@@ -92,7 +140,7 @@ function findpoint(this::SimplexGridBuilder,x,y)
     return 0
 end
 
-function findpoint(this::SimplexGridBuilder,x,y,z)
+function _findpoint(this::SimplexGridBuilder,x,y,z)
     if this.point_identity_tolerance<0.0
         return 0
     end
@@ -107,12 +155,15 @@ function findpoint(this::SimplexGridBuilder,x,y,z)
     return 0
 end
 
-findpoint(this::SimplexGridBuilder, p::Union{Array,Tuple})=point!(this,p...)
+_findpoint(this::SimplexGridBuilder, p::Union{Array,Tuple})=point!(this,p...)
 
-    
+"""
+$(TYPEDSIGNATURES)
+Add point or merge with already existing point. Return its index.
+"""    
 function point!(this::SimplexGridBuilder,x)
     dim_space(this)==1||throw(DimensionMismatchError())
-    p=findpoint(this,x)
+    p=_findpoint(this,x)
     if p>0
         return p
     end
@@ -120,9 +171,13 @@ function point!(this::SimplexGridBuilder,x)
     size(this.points,2)
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add point or merge with already existing point. Return its index.
+"""    
 function point!(this::SimplexGridBuilder,x,y)
     dim_space(this)==2||throw(DimensionMismatchError())
-    p=findpoint(this,x,y)
+    p=_findpoint(this,x,y)
     if p>0
         return p
     end
@@ -130,9 +185,13 @@ function point!(this::SimplexGridBuilder,x,y)
     size(this.points,2)
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add point or merge with already existing point. Return its index.
+"""    
 function point!(this::SimplexGridBuilder,x,y,z)
     dim_space(this)==3||throw(DimensionMismatchError())
-    p=findpoint(this,x,y,z)
+    p=_findpoint(this,x,y,z)
     if p>0
         return p
     end
@@ -140,10 +199,17 @@ function point!(this::SimplexGridBuilder,x,y,z)
     size(this.points,2)
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add point or merge with already existing point. Return its index.
+"""    
 point!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=point!(this,p...)
 
 
-
+"""
+$(TYPEDSIGNATURES)
+Add a region point marking a region, indicate simplex volume in this region.
+"""
 function cellregion!(this::SimplexGridBuilder,x;region=1,volume=1.0)
     dim_space(this)==1||throw(DimensionMismatchError())
     append!(this.regionpoints,(x))
@@ -152,6 +218,10 @@ function cellregion!(this::SimplexGridBuilder,x;region=1,volume=1.0)
     region
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add a region point marking a region, indicate simplex volume in this region.
+"""
 function cellregion!(this::SimplexGridBuilder,x,y;region=1,volume=1.0)
     dim_space(this)==2||throw(DimensionMismatchError())
     append!(this.regionpoints,(x,y))
@@ -159,6 +229,10 @@ function cellregion!(this::SimplexGridBuilder,x,y;region=1,volume=1.0)
     push!(this.regionnumbers,region)
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add a region point marking a region, indicate simplex volume in this region.
+"""
 function cellregion!(this::SimplexGridBuilder,x,y,z;region=1,volume=1.0)
     dim_space(this)==3||throw(DimensionMismatchError())
     append!(this.regionpoints,(x,y,z))
@@ -167,14 +241,43 @@ function cellregion!(this::SimplexGridBuilder,x,y,z;region=1,volume=1.0)
     region
 end
 
+"""
+$(TYPEDSIGNATURES)
+Add a region point marking a region, indicate simplex volume in this region.
+"""
 cellregion!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1,volume=1.0)=cellregion!(this,p...,region=region,volume=volume)
 
+"""
+$(TYPEDSIGNATURES)
+Add a point marking a hole region
+"""
 hole!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=cellregion!(this,p,region=0,volume=1)
+
+"""
+$(TYPEDSIGNATURES)
+Add a point marking a hole region
+"""
 hole!(this::SimplexGridBuilder, x)=cellregion!(this,x,region=0,volume=1)
+
+"""
+$(TYPEDSIGNATURES)
+Add a point marking a hole region
+"""
 hole!(this::SimplexGridBuilder, x,y)=cellregion!(this,x,y,region=0,volume=1)
+
+"""
+$(TYPEDSIGNATURES)
+Add a point marking a hole region
+"""
 hole!(this::SimplexGridBuilder, x,y,z)=cellregion!(this,x,y,z,region=0,volume=1)
 
 
+
+"""
+$(TYPEDSIGNATURES)
+
+Add a facet via the corresponding point indices.
+"""
 function facet!(this::SimplexGridBuilder,i;region=1)
     dim_space(this)==1||throw(DimensionMismatchError())
     push!(this.facets,[i])
@@ -182,6 +285,11 @@ function facet!(this::SimplexGridBuilder,i;region=1)
     length(this.facets)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Add a facet via the corresponding point indices.
+"""
 function facet!(this::SimplexGridBuilder,i1,i2;region=1)
     dim_space(this)==2||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2])
@@ -189,6 +297,11 @@ function facet!(this::SimplexGridBuilder,i1,i2;region=1)
     length(this.facets)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Add a facet via the corresponding point indices.
+"""
 function facet!(this::SimplexGridBuilder,i1,i2,i3;region=1)
     dim_space(this)==3||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2,i3])
@@ -196,6 +309,11 @@ function facet!(this::SimplexGridBuilder,i1,i2,i3;region=1)
     length(this.facets)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Add a facet via the corresponding point indices.
+"""
 function facet!(this::SimplexGridBuilder,i1,i2,i3,i4;region=1)
     dim_space(this)==3||throw(DimensionMismatchError())
     push!(this.facets,[i1,i2,i3,i4])
@@ -203,6 +321,11 @@ function facet!(this::SimplexGridBuilder,i1,i2,i3,i4;region=1)
     length(this.facets)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Add a facet via the corresponding point indices.
+"""
 function facet!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1)
     if dim_space(this)==1
         length(p)==1 || throw(DimensionMismatchError())
@@ -218,6 +341,11 @@ function facet!(this::SimplexGridBuilder,p::Union{Vector,Tuple};region=1)
     length(this.facets)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Build simplex grid from the current state of the builder.
+"""
 function ExtendableGrids.simplexgrid(this::SimplexGridBuilder)
     dim_space(this)==2 || throw(error("dimension !=2 not implemented"))
     facets=Array{Cint,2}(undef,2,length(this.facets))
@@ -236,6 +364,11 @@ function ExtendableGrids.simplexgrid(this::SimplexGridBuilder)
                                 unsuitable=this.unsuitable)
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Create triangle input from the current state of the builder.
+"""
 function triangulateio(this::SimplexGridBuilder)
     dim_space(this)==2 || throw(error("dimension !=2 not implemented"))
     facets=Array{Cint,2}(undef,2,length(this.facets))

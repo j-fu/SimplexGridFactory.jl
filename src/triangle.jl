@@ -2,6 +2,13 @@
 $(TYPEDSIGNATURES)
 
 Create Grid from Triangle input data.
+
+See the documentations for 
+[`TriangulateIO`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.TriangulateIO),
+[`triunsuitable`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triunsuitable-Tuple{Function})
+and the [short](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triangulate-Tuple{String,TriangulateIO})
+resp. [long](https://juliageometry.github.io/Triangulate.jl/stable/triangle-h/)  documentation of the Triangle
+control flags.
 """
 function ExtendableGrids.simplexgrid(flags::String, input::Triangulate.TriangulateIO;unsuitable=nothing)
 
@@ -37,6 +44,7 @@ function ExtendableGrids.simplexgrid(flags::String, input::Triangulate.Triangula
 end
 
 """
+
 ````
 function simplexgrid(;flags::String="pAaqDQ",
                      points=Array{Cdouble,2}(undef,0,0),
@@ -52,9 +60,16 @@ Create Grid from a number of input arrays.
 The 2D input arrays are transposed if necessary and converted to
 the proper data types for Triangulate.
 
-This conversion is not performed if the data types are thos
+This conversion is not performed if the data types are those
 indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
+
+See the documentations for 
+[`triunsuitable`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triunsuitable-Tuple{Function})
+and the [short](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triangulate-Tuple{String,TriangulateIO})
+resp. [long](https://juliageometry.github.io/Triangulate.jl/stable/triangle-h/)  documentation of the Triangle
+control flags.
+
 """
 function ExtendableGrids.simplexgrid(;flags::String="pAaqDQ",
                      points=Array{Cdouble,2}(undef,0,0),
@@ -76,6 +91,18 @@ function ExtendableGrids.simplexgrid(;flags::String="pAaqDQ",
     ExtendableGrids.simplexgrid(flags,tio,unsuitable=unsuitable)
 end
 
+"""
+$(TYPEDSIGNATURES)
+Create a TriangulateIO structure 
+from a number of input arrays.
+The 2D input arrays are transposed if necessary and converted to
+the proper data types for Triangulate.
+ 
+This conversion is not performed if the data types are those
+indicated in the defaults and the leading dimension of 2D arrays
+corresponds to the space dimension.
+
+"""
 function triangulateio(;flags::String="pAaqDQ",
                        points=Array{Cdouble,2}(undef,0,0),
                        bfaces=Array{Cint,2}(undef,0,0),

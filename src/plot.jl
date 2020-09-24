@@ -1,7 +1,7 @@
 """
-$(SIGNATURES)
+$(TYPEDSIGNATURES)
 
-Two panel plot of gridfactory.
+Two panel plot of gridfactory and its output.
 
 
 """
@@ -9,7 +9,7 @@ ExtendableGrids.plot!(ctx::PlotterContext,gf::SimplexGridBuilder;kwargs...)=plot
 
 
 """
-$(SIGNATURES)
+$(TYPEDSIGNATURES)
 
 Two panel plot of gridfactory with input and resulting grid
 

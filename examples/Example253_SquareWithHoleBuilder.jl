@@ -1,9 +1,8 @@
-#= 
+# 
+# # 253: Square with hole via GridBuilder
+# ([source code](SOURCE_URL))
+# 
 
-# 253: Square with hole via GridBuilder
-([source code](SOURCE_URL))
-
-=#
 
 module Example253_SquareWithHoleBuilder
 using SimplexGridFactory

@@ -1,9 +1,8 @@
-#= 
+# 
+# # 251: Square using SimplexGridBuilder
+# ([source code](SOURCE_URL))
+# 
 
-# 251: Square using SimplexGridBuilder
-([source code](SOURCE_URL))
-
-=#
 
 module Example251_SquareBuilder
 using SimplexGridFactory

@@ -1,9 +1,8 @@
-#= 
+# 
+# # 252: Locally refined square using GridBuilder
+# ([source code](SOURCE_URL))
+# 
 
-# 252: Locally refined square using GridBuilder
-([source code](SOURCE_URL))
-
-=#
 
 module Example252_SquareLocalRefBuilder
 using SimplexGridFactory

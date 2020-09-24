@@ -1,13 +1,12 @@
-#= 
-
-# 201: Square
-([source code](SOURCE_URL))
-
-=#
+#
+# # 201: Square
+# ([source code](SOURCE_URL))
+#
 
 module Example201_Square
 using ExtendableGrids
 using SimplexGridFactory
+
 
 function main(;plotter=nothing)
 
