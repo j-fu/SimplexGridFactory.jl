@@ -6,5 +6,5 @@
 SimplexGridFactory
 ==================
 
-Contains convenience interfaces to triangle (via Triangulate.jl)  and (planned...) TetGen.
+Contains convenience interfaces to triangle (via Triangulate.jl)  and TetGen via TetGen.jl.
 

@@ -20,7 +20,6 @@ function mkdocs()
     example_jl_dir = joinpath(@__DIR__,"..","examples")
     example_md_dir  = joinpath(@__DIR__,"src","examples")
 
-    generated_examples=[]
     for example_source in readdir(example_jl_dir)
         base,ext=splitext(example_source)
         if ext==".jl" && occursin("Example",base)

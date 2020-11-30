@@ -43,53 +43,6 @@ function ExtendableGrids.simplexgrid(flags::String, input::Triangulate.Triangula
     ExtendableGrids.simplexgrid(pointlist,trianglelist,cellregions,segmentlist,segmentmarkerlist)
 end
 
-"""
-
-````
-function simplexgrid(;flags::String="pAaqDQ",
-                     points=Array{Cdouble,2}(undef,0,0),
-                     bfaces=Array{Cint,2}(undef,0,0),
-                     bfaceregions=Array{Cint,1}(undef,0),
-                     regionpoints=Array{Cdouble,2}(undef,0,0),
-                     regionnumbers=Array{Cint,1}(undef,0),
-                     regionvolumes=Array{Cdouble,1}(undef,0),
-                     unsuitable=nothing
-                  )
-````
-Create Grid from a number of input arrays.
-The 2D input arrays are transposed if necessary and converted to
-the proper data types for Triangulate.
-
-This conversion is not performed if the data types are those
-indicated in the defaults and the leading dimension of 2D arrays
-corresponds to the space dimension.
-
-See the documentations for 
-[`triunsuitable`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triunsuitable-Tuple{Function})
-and the [short](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triangulate-Tuple{String,TriangulateIO})
-resp. [long](https://juliageometry.github.io/Triangulate.jl/stable/triangle-h/)  documentation of the Triangle
-control flags.
-
-"""
-function ExtendableGrids.simplexgrid(;flags::String="pAaqDQ",
-                     points=Array{Cdouble,2}(undef,0,0),
-                     bfaces=Array{Cint,2}(undef,0,0),
-                     bfaceregions=Array{Cint,1}(undef,0),
-                     regionpoints=Array{Cdouble,2}(undef,0,0),
-                     regionnumbers=Array{Cint,1}(undef,0),
-                     regionvolumes=Array{Cdouble,1}(undef,0),
-                     unsuitable=nothing
-                     )
-    tio=triangulateio(flags=flags,
-                      points=points,
-                      bfaces=bfaces,
-                      bfaceregions=bfaceregions,
-                      regionpoints=regionpoints,
-                      regionnumbers=regionnumbers,
-                      regionvolumes=regionvolumes)
-    
-    ExtendableGrids.simplexgrid(flags,tio,unsuitable=unsuitable)
-end
 
 """
 $(TYPEDSIGNATURES)

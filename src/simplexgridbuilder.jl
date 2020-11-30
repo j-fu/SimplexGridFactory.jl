@@ -347,11 +347,14 @@ $(TYPEDSIGNATURES)
 Build simplex grid from the current state of the builder.
 """
 function ExtendableGrids.simplexgrid(this::SimplexGridBuilder)
-    dim_space(this)==2 || throw(error("dimension !=2 not implemented"))
-    facets=Array{Cint,2}(undef,2,length(this.facets))
-    for i=1:length(this.facets)
-        facets[1,i]=this.facets[i][1]
-        facets[2,i]=this.facets[i][2]
+    if dim_space(this)==2
+        facets=Array{Cint,2}(undef,2,length(this.facets))
+        for i=1:length(this.facets)
+            facets[1,i]=this.facets[i][1]
+            facets[2,i]=this.facets[i][2]
+        end
+    else
+        facets=this.facets
     end
     
     ExtendableGrids.simplexgrid(flags=this.flags,
@@ -387,3 +390,83 @@ function triangulateio(this::SimplexGridBuilder)
     
 end
 
+"""
+$(TYPEDSIGNATURES)
+
+Create tetgen input from the current state of the builder.
+"""
+function tetgenio(this::SimplexGridBuilder)
+    dim_space(this)=3 || throw(error("dimension !=2 not implemented"))
+    facets=Array{Cint,2}(undef,2,length(this.facets))
+    for i=1:length(this.facets)
+        facets[1,i]=this.facets[i][1]
+        facets[2,i]=this.facets[i][2]
+    end
+    
+    triangulateio(flags=this.flags,
+                  points=this.points,
+                  bfaces=facets,
+                  bfaceregions=this.facetregions,
+                  regionpoints=this.regionpoints,
+                  regionnumbers=this.regionnumbers,
+                  regionvolumes=this.regionvolumes)
+    
+end
+
+"""
+````
+function simplexgrid(;flags::String="pAaqDQ",
+                     points=Array{Cdouble,2}(undef,0,0),
+                     bfaces=Array{Cint,2}(undef,0,0),
+                     bfaceregions=Array{Cint,1}(undef,0),
+                     regionpoints=Array{Cdouble,2}(undef,0,0),
+                     regionnumbers=Array{Cint,1}(undef,0),
+                     regionvolumes=Array{Cdouble,1}(undef,0),
+                     unsuitable=nothing
+                  )
+````
+Create Grid from a number of input arrays.
+The 2D input arrays are transposed if necessary and converted to
+the proper data types for TetGen.
+
+This conversion is not performed if the data types are those
+indicated in the defaults and the leading dimension of 2D arrays
+corresponds to the space dimension.
+
+See the documentations for 
+[`triunsuitable`](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.triunsuitable-Tuple{Function})
+and the [short](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.triangulate-Tuple{String,RawTetGenIO})
+resp. [long](https://juliageometry.github.io/TetGen.jl/stable/triangle-h/)  documentation of the Triangle
+control flags.
+
+"""
+function ExtendableGrids.simplexgrid(;flags::String="pAaqQ",
+                                     points=Array{Cdouble,2}(undef,0,0),
+                                     bfaces=Array{Cint,2}(undef,0,0),
+                                     bfaceregions=Array{Cint,1}(undef,0),
+                                     regionpoints=Array{Cdouble,2}(undef,0,0),
+                                     regionnumbers=Array{Cint,1}(undef,0),
+                                     regionvolumes=Array{Cdouble,1}(undef,0),
+                                     unsuitable=nothing
+                                     )
+    
+    if size(points,1)==2
+        tio=triangulateio(flags=flags,
+                          points=points,
+                          bfaces=bfaces,
+                          bfaceregions=bfaceregions,
+                          regionpoints=regionpoints,
+                          regionnumbers=regionnumbers,
+                          regionvolumes=regionvolumes)
+    else
+        tio=tetgenio(flags=flags,
+                     points=points,
+                     bfaces=bfaces,
+                     bfaceregions=bfaceregions,
+                     regionpoints=regionpoints,
+                     regionnumbers=regionnumbers,
+                     regionvolumes=regionvolumes)
+    end
+    
+    ExtendableGrids.simplexgrid(flags,tio,unsuitable=unsuitable)
+end
