@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>352: Prism with SimplexGridBuilder · SimplexGridFactory.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">SimplexGridFactory.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../Example201_Square/">201: Square</a></li><li><a class="tocitem" href="../Example202_SquareLocalRef/">202: Locally refined square</a></li><li><a class="tocitem" href="../Example203_SquareWithHole/">203: Square with hole</a></li><li><a class="tocitem" href="../Example251_SquareBuilder/">251: Square using SimplexGridBuilder</a></li><li><a class="tocitem" href="../Example252_SquareLocalRefBuilder/">252: Locally refined square using GridBuilder</a></li><li><a class="tocitem" href="../Example253_SquareWithHoleBuilder/">253: Square with hole via GridBuilder</a></li><li><a class="tocitem" href="../Example301_Cube/">301: Cube</a></li><li><a class="tocitem" href="../Example302_Prism/">302: Prism</a></li><li><a class="tocitem" href="../Example351_CubeBuilder/">351: Cube with SimplexGridBuilder</a></li><li class="is-active"><a class="tocitem" href>352: Prism with SimplexGridBuilder</a></li></ul></li><li><a class="tocitem" href="../../pluto/">Pluto Notebook(s)</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>352: Prism with SimplexGridBuilder</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>352: Prism with SimplexGridBuilder</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/j-fu/SimplexGridFactory.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id=":-Prism-with-SimplexGridBuilder"><a class="docs-heading-anchor" href="#:-Prism-with-SimplexGridBuilder">352: Prism with SimplexGridBuilder</a><a id=":-Prism-with-SimplexGridBuilder-1"></a><a class="docs-heading-anchor-permalink" href="#:-Prism-with-SimplexGridBuilder" title="Permalink"></a></h1><p>(<a href="https://github.com/j-fu/SimplexGridFactory.jl/raw/master/examples/Example352_PrismBuilder.jl">source code</a>)</p><pre><code class="language-julia">module Example352_PrismBuilder
+using ExtendableGrids
+using SimplexGridFactory
+
+
+function main(;plotter=nothing,vol=2)
+
+    builder=SimplexGridBuilder(dim_space=3)
+
+    p1=point!(builder,0, 0, 0)
+    p2=point!(builder,1, 0, 0)
+    p3=point!(builder,0, 1, 0)
+    p4=point!(builder,0, 0, 1)
+    p5=point!(builder,1, 0, 1)
+    p6=point!(builder,0, 1, 1)
+
+
+                     bfaces=[[1,2,3],
+                             [4,5,6],
+                             [1,2,5,4],
+                             [2,3,6,5],
+                             [3,1,4,6]],
+
+
+
+
+    facet!(builder,p1, p2, p3 )
+    facet!(builder,p4, p5, p6 )
+    facet!(builder,p1, p2, p5, p4 )
+    facet!(builder,p2, p3, p6, p5 )
+    facet!(builder,p3, p1, p4, p6 )
+
+    cellregion!(builder,0.25,0.25,0.5,region=1,volume=vol)
+    flags!(builder,&quot;pAQa&quot;)
+    grid=simplexgrid(builder)
+
+
+    ExtendableGrids.plot(grid,Plotter=plotter)
+    (num_nodes(grid),num_cells(grid),num_bfaces(grid))
+end
+
+function test()
+    main()==(6,3,8)
+end
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Example351_CubeBuilder/">« 351: Cube with SimplexGridBuilder</a><a class="docs-footer-nextpage" href="../../pluto/">Pluto Notebook(s) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 3 December 2020 23:13">Thursday 3 December 2020</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
