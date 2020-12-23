@@ -3,36 +3,34 @@ $(TYPEDSIGNATURES)
 
 Create Grid from TetGen data.
 
+See [`default_options`](@ref) for available `kwargs`.
+
 """
-function ExtendableGrids.simplexgrid(flags::String, input::TetGen.RawTetGenIO;unsuitable=nothing)
+function ExtendableGrids.simplexgrid(input::TetGen.RawTetGenIO;kwargs...)
 
-    # if typeof(unsuitable)!=Nothing
-    #     triunsuitable(unsuitable)
-    # end
-        
-    tetout=TetGen.tetrahedralize(input,flags)
-
-    pointlist=tetout.pointlist
-    if eltype(pointlist)!=Float64
-        pointlist=Array{Float64,2}(pointlist)
+    opts=blendoptions!(default_options();kwargs...)
+    
+    flags=makeflags(opts,:tetgen)
+    
+    if opts[:verbose]
+        @show flags
     end
     
-    tetrahedronlist=tetout.tetrahedronlist
-    if eltype(tetrahedronlist)!=Int32
-        tetrahedronlist=Array{Int32,2}(tetrahedronlist)
+    if !isnothing(opts[:unsuitable])
+        tetunsuitable(opts[:unsuitable])
     end
-
+    
+    tetout=TetGen.tetrahedralize(input,flags)
+    
+    pointlist=tetout.pointlist
+    
+    tetrahedronlist=tetout.tetrahedronlist
+    
     cellregions=Vector{Int32}(vec(tetout.tetrahedronattributelist))
     
     segmentlist=tetout.trifacelist
-    if eltype(segmentlist)!=Int32
-        segmentlist=Array{Int32,2}(segmentlist)
-    end
     
     segmentmarkerlist=tetout.trifacemarkerlist
-    if eltype(segmentmarkerlist)!=Int32
-        segmentmarkerlist=Array{Int32,2}(segmentmarkerlist)
-    end
     
     ExtendableGrids.simplexgrid(pointlist,tetrahedronlist,cellregions,segmentlist,segmentmarkerlist)
 end
@@ -149,3 +147,22 @@ function tetgenio(;flags::String="pAaqDQ",
     end
     tio
 end
+
+
+"""
+$(TYPEDSIGNATURES)
+
+Create tetgen input from the current state of the builder.
+"""
+function tetgenio(this::SimplexGridBuilder)
+    dim_space(this)=3 || throw(error("dimension !=2 not implemented"))
+    
+   tetgenio(points=this.points,
+            bfaces=facets,
+            bfaceregions=this.facetregions,
+            regionpoints=this.regionpoints,
+            regionnumbers=this.regionnumbers,
+            regionvolumes=this.regionvolumes)
+end
+
+

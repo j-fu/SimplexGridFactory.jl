@@ -1,44 +1,57 @@
-push!(LOAD_PATH,"../src/")
-using Documenter, SimplexGridFactory, ExtendableGrids, Literate
+#push!(LOAD_PATH,"../src/")
+ENV["MPLBACKEND"]="agg"
+using Documenter, SimplexGridFactory, ExtendableGrids, Literate, PyPlot
 
-#
-# Replace SOURCE_URL marker with github url of source
-#
-function replace_source_url(input,source_url)
-    lines_in = collect(eachline(IOBuffer(input)))
-    lines_out=IOBuffer()
-    for line in lines_in
-        println(lines_out,replace(line,"SOURCE_URL" => source_url))
-    end
-    return String(take!(lines_out))
+
+examples2d=joinpath(@__DIR__,"..","examples","examples2d.jl")
+example_md_dir  = joinpath(@__DIR__,"src","examples")
+
+include(examples2d)
+
+function makeplots(picdir)
+    clf()
+    ExtendableGrids.plot(triangulation_of_domain(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"triangulation_of_domain.svg"))
+    
+    clf()
+    ExtendableGrids.plot(nicer_triangulation_of_domain(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"nicer_triangulation_of_domain.svg"))
+    
+    clf()
+    ExtendableGrids.plot(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"triangulation_of_domain_with_subregions.svg"))
+    
+    clf()
+    ExtendableGrids.plot(square_localref(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"square_localref.svg"))
+    
+    clf()
+    ExtendableGrids.plot(direct_square(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"direct_square.svg"))
+    
+    clf()
+    ExtendableGrids.plot(swiss_cheese_2d(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 end
 
-
-
-
+    
+    
 function mkdocs()
-    example_jl_dir = joinpath(@__DIR__,"..","examples")
-    example_md_dir  = joinpath(@__DIR__,"src","examples")
 
-    for example_source in readdir(example_jl_dir)
-        base,ext=splitext(example_source)
-        if ext==".jl" && occursin("Example",base)
-            source_url="https://github.com/j-fu/SimplexGridFactory.jl/raw/master/examples/"*example_source
-            preprocess(buffer)=replace_source_url(buffer,source_url)
-            Literate.markdown(joinpath(@__DIR__,"..","examples",example_source),
-                              example_md_dir,
-                              documenter=false,
-                              info=false,
-                              preprocess=preprocess)
-        end
-    end
-    generated_examples=joinpath.("examples",readdir(example_md_dir))
+    Literate.markdown(examples2d,
+                      example_md_dir,
+                      documenter=false,
+                      info=false)
 
 
+    
+    generated_examples=joinpath.("examples",filter(x->endswith(x, ".md"),readdir(example_md_dir)))
 
+    makeplots(example_md_dir)
+    
     makedocs(sitename="SimplexGridFactory.jl",
              modules = [SimplexGridFactory],
-             doctest = true,
+             doctest = false,
              clean = true,
              authors = "J. Fuhrmann, Ch. Merdon",
              repo="https://github.com/j-fu/SimplexGridFactory.jl",

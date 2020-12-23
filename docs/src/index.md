@@ -10,7 +10,7 @@ $(read("../../README.md",String))
 
 ```@autodocs
 Modules = [SimplexGridFactory]
-Pages = ["triangle.jl"]
+Pages = ["triangle.jl","tetgen.jl","options.jl","simplexgrid.jl"]
 ```
 
 ### SimplexGridBuilder

@@ -1,55 +1,244 @@
 using Test
+using SimplexGridFactory
+using ExtendableGrids
+using Triangulate
+using LinearAlgebra
 
-
-using Test
-
-modname(fname)=splitext(basename(fname))[1]
-
-#
-# Include all Julia files in `testdir` whose name starts with `prefix`,
-# Each file `prefixModName.jl` must contain a module named
-# `prefixModName` which has a method test() returning true
-# or false depending on success.
-#
-function run_tests_from_directory(testdir,prefix)
-    println("Directory $(testdir):")
-    begin
-        examples=modname.(readdir(testdir))
-        for example in examples
-            if length(example)>=length(prefix) &&example[1:length(prefix)]==prefix
-                @info "$(example):"
-                path=joinpath(testdir,"$(example).jl")
-                @eval begin
-                    include($path)
-                    # Compile + run test
-                    @info "compile:"
-                    @time @test eval(Meta.parse("$($example).test()"))
-                    # Second run: pure execution time.
-                    @info "run:"
-                    @time eval(Meta.parse("$($example).test()"))
-                end
-            end
-        end
+@testset "Basic triangulation 2d" begin
+    function test_ctriangulateio()
+        nodes=Matrix{Cdouble}([1.0 0.0 ; 0.0 1.0 ; -1.0 0.0 ; 0.0 -1.0]')
+        faces=Matrix{Cint}([1 2 ; 2 3 ; 3 4 ; 4 1 ]')
+        faceregions=Matrix{Cint}([1 2 3 4]')
+        regionpoints=Matrix{Cdouble}([0.5 0.5 1 0.01;]')
+        regionnumbers=[1]
+        triin=Triangulate.CTriangulateIO()
+        triout=Triangulate.CTriangulateIO()
+        vorout=Triangulate.CTriangulateIO()
+        triin.numberofpoints=Cint(size(nodes,2))
+        triin.pointlist=pointer(nodes)
+        triin.numberofsegments=size(faces,2)
+        triin.segmentlist=pointer(faces)
+        triin.segmentmarkerlist=pointer(faceregions)
+        triin.numberofregions=size(regionpoints,2)
+        triin.regionlist=pointer(regionpoints)
+        
+        Triangulate.triangulate("paAqQ",triin,triout,vorout)
+        points = convert(Array{Float64,2}, Base.unsafe_wrap(Array, triout.pointlist, (2,Int(triout.numberofpoints)), own=true))
+        cells  = convert(Array{Int32,2}, Base.unsafe_wrap(Array, triout.trianglelist, (2,Int(triout.numberoftriangles)), own=true))
+        bfaces = convert(Array{Int32,2}, Base.unsafe_wrap(Array, triout.segmentlist, (2,Int(triout.numberofsegments)), own=true))
+        cellregions=convert(Array{Float64,1}, Base.unsafe_wrap(Array, triout.triangleattributelist, (Int(triout.numberoftriangles)), own=true))
+        bfaceregions=convert(Array{Int32,1}, Base.unsafe_wrap(Array, triout.segmentmarkerlist, (Int(triout.numberofsegments)), own=true))
+        cellregions=Vector{Int32}(cellregions)
+        
+        grid=simplexgrid(points,cells,cellregions,bfaces,bfaceregions)
+        
+        num_nodes(grid)==177 && num_cells(grid)==319 && num_bfaces(grid)==33
     end
+    @test test_ctriangulateio()
+    
+    function test_triangulateio()
+        triin=Triangulate.TriangulateIO()
+        triin.pointlist=Matrix{Float64}([1.0 0.0 ; 0.0 1.0 ; -1.0 0.0 ; 0.0 -1.0]')
+        triin.segmentlist=Matrix{Int32}([1 2 ; 2 3 ; 3 4 ; 4 1 ]')
+        triin.segmentmarkerlist=Vector{Int32}([1, 2, 3, 4])
+        triin.regionlist=Matrix{Float64}([0.5 0.5 1 0.01;]')
+        grid=simplexgrid(triin,flags="paAqQ")
+        num_nodes(grid)==177 && num_cells(grid)==319 && num_bfaces(grid)==33
+    end
+    @test test_triangulateio()
+    
 end
 
 
-function run_all_tests()
-    @time begin
-        run_tests_from_directory(@__DIR__,"test_")
-        run_tests_from_directory(joinpath(@__DIR__,"..","examples"),"Example")
-        @info "Tests finished"
+
+function test_triunsuitable(x1,y1,x2,y2,x3,y3, area)
+    refinement_center=[0.5,0.5]
+    bary=[(x1+x2+x3)/3,(y2+y2+y3)/3]
+    dist=norm(bary-refinement_center)
+    if area > 0.01*dist
+        return 1
+    else
+        return 0
     end
 end
 
-run_all_tests()
+@testset "Simplexgrid from arrays 2D & kwargs" begin
+    function test_simplesquare(;kwargs...)
+        grid=simplexgrid(points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
+                         bfaces=[1 2 ; 2 3 ; 3 4 ; 4 1 ]',
+                         bfaceregions=[1, 2, 3, 4],
+                         regionpoints=[0.5 0.5;]',
+                         regionnumbers=[1],
+                         regionvolumes=[0.01];kwargs...)
+        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
+    end
+    
+    @test test_simplesquare()==(89, 144, 32)
+    @test test_simplesquare(flags="pAaqQD")==(89, 144, 32)
+    @test test_simplesquare(maxvolume=0.05)==(24, 30, 16)
+    @test test_simplesquare(quality=false)==(88, 142, 32)
+    @test test_simplesquare(minangle=30)==(91, 148, 32)
+    
+    
+    @test test_simplesquare(unsuitable=test_triunsuitable)==(299, 550, 46)
+end
 
-# include("adjacency.jl")
-# include("extendablegrid.jl")
+@testset "SimplexGridBuilder 2d" begin
+    
+    function test_buildersquare(;kwargs...)
+        
+        builder=SimplexGridBuilder(dim=2)
+        cellregion!(builder,1)
+        maxvolume!(builder,0.01)
+        regionpoint!(builder,0.5,0.5)
+        
+        p1=point!(builder,0,0)
+        p2=point!(builder,1,0)
+        p3=point!(builder,1,1)
+        p4=point!(builder,0,1)
+        
+        facetregion!(builder,1)
+        facet!(builder,p1,p2)
+        facetregion!(builder,2)
+        facet!(builder,p2,p3)
+        facetregion!(builder,3)
+        facet!(builder,p3,p4)
+        facetregion!(builder,4)
+        facet!(builder,p4,p1)
+        
+        grid=simplexgrid(builder;kwargs...)
+        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
+    end
+    @test test_buildersquare(minangle=30)==(91, 148, 32)
+
+    function test_buildersquare1(;kwargs...)
+        
+        builder=SimplexGridBuilder(dim=2)
+        cellregion!(builder,1)
+        maxvolume!(builder,0.01)
+        regionpoint!(builder,0.5,0.5)
+        
+        p1=point!(builder,0,0)
+        p2=point!(builder,1,0)
+        p3=point!(builder,1,1)
+        p4=point!(builder,0,1)
+        
+        options!(builder, unsuitable=test_triunsuitable)
+        
+        facetregion!(builder,1)
+        facet!(builder,p1,p2)
+        facetregion!(builder,2)
+        facet!(builder,p2,p3)
+        facetregion!(builder,3)
+        facet!(builder,p3,p4)
+        facetregion!(builder,4)
+        facet!(builder,p4,p1)
+        
+        grid=simplexgrid(builder;kwargs...)
+    (num_nodes(grid),num_cells(grid), num_bfaces(grid))
+    end
+    @test test_buildersquare1()==(299, 550, 46)
+
+end
+    
+function test_tetunsuitable(pa,pb,pc,pd)
+    vol=det(hcat(pb-pa,pc-pa,pd-pa))/6
+    center=0.25*(pa+pb+pc+pd)-[0.5,0.5,0.5]
+    vol> 0.05*norm(center)^2.5
+end
 
 
-# test_adj_correctness()
-# xadj=test_lazy(test_create_square())
+@testset "Simplexgrid from arrays 3D & kwargs" begin
+    
+    function test_simplecube(;kwargs...)
+        
+        grid=simplexgrid(points=[0 0 0; 
+                                 1 0 0; 
+                                 1 1 0; 
+                                 0 1 0; 
+                                 0 0 1; 
+                                 1 0 1; 
+                                 1 1 1; 
+                                 0 1 1]',
+                         
+                         bfaces=[1 2 3 4;  
+                                 5 6 7 8;  
+                                 1 2 6 5;  
+                                 2 3 7 6;  
+                                 3 4 8 7;  
+                                 4 1 5 8]',
+                         bfaceregions=[i for i=1:6],
+                         regionpoints=[0.5 0.5 0.5]',
+                     regionnumbers=[1],
+                         regionvolumes=[0.01];
+                         kwargs...
+                         )
+        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
+    end
+    
+    @test test_simplecube()==(109, 286, 198)
+    @test test_simplecube(flags="pAaqQD")==(109, 286, 198)
+    @test test_simplecube(maxvolume=0.05)==(50, 68, 96)
+    
+    @test test_simplecube(unsuitable=test_tetunsuitable)==(223, 971, 198)
+    
+end
 
-# @test xadj[:,5]==Int32[46, 80, 88, 118, 159, 162, 165, 167]
+@testset "SimplexGridBuilder 3d" begin
+    
+    function test_buildercube(;kwargs...)
+        
+        builder=SimplexGridBuilder(dim=3)
+        cellregion!(builder,1)
+        maxvolume!(builder,0.01)
+        regionpoint!(builder,0.5,0.5,0.5)
+        
+        
+        p1=point!(builder,0,0,0)
+        p2=point!(builder,1, 0, 0)
+        p3=point!(builder,1, 1, 0)
+        p4=point!(builder,0, 1, 0)
+        p5=point!(builder,0, 0, 1)
+        p6=point!(builder,1, 0, 1)
+        p7=point!(builder,1, 1, 1)
+        p8=point!(builder,0 ,1, 1)
+        
+        
+        facetregion!(builder,1)
+        facet!(builder,p1 ,p2 ,p3 ,p4)  
+        facetregion!(builder,2)
+        facet!(builder,p5 ,p6 ,p7 ,p8)  
+        facetregion!(builder,3)
+        facet!(builder,p1 ,p2 ,p6 ,p5)  
+        facetregion!(builder,4)
+        facet!(builder,p2 ,p3 ,p7 ,p6)  
+        facetregion!(builder,5)
+        facet!(builder,p3 ,p4 ,p8 ,p7)  
+        facetregion!(builder,6)
+        facet!(builder,p4 ,p1 ,p5 ,p8)
+        
+        grid=simplexgrid(builder;kwargs...)
+        
+        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
+    end
+
+    @test test_buildercube(unsuitable=test_tetunsuitable)==(223, 971, 198)
+    
+end
+
+function testgrid(grid_or_builder,testdata)
+    grid= (typeof(grid_or_builder) == SimplexGridBuilder) ? simplexgrid(grid_or_builder) : grid_or_builder
+    (num_nodes(grid),num_cells(grid), num_bfaces(grid))==testdata
+end
+
+    
+@testset "examples2d.jl" begin    
+    include("../examples/examples2d.jl")
+    @test testgrid(triangulation_of_domain(),(10,8,10))
+    @test testgrid(nicer_triangulation_of_domain(),(187,306,66))
+    @test testgrid(triangulation_of_domain_with_subregions(),(146,243,55))
+    @test testgrid(square_localref(),(299, 550, 46))
+    @test testgrid(direct_square(),(89, 144, 32))
+    @test testgrid(swiss_cheese_2d(),(1475, 2526,496))
+end;
 

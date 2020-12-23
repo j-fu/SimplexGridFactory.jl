@@ -3,43 +3,33 @@ $(TYPEDSIGNATURES)
 
 Create Grid from Triangle input data.
 
-See the documentations for 
-[`TriangulateIO`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.TriangulateIO),
-[`triunsuitable`](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triunsuitable-Tuple{Function})
-and the [short](https://juliageometry.github.io/Triangulate.jl/stable/#Triangulate.triangulate-Tuple{String,TriangulateIO})
-resp. [long](https://juliageometry.github.io/Triangulate.jl/stable/triangle-h/)  documentation of the Triangle
-control flags.
+See [`default_options`](@ref) for available `kwargs`.
 """
-function ExtendableGrids.simplexgrid(flags::String, input::Triangulate.TriangulateIO;unsuitable=nothing)
+function ExtendableGrids.simplexgrid(input::Triangulate.TriangulateIO; kwargs...)
 
-    if typeof(unsuitable)!=Nothing
-        triunsuitable(unsuitable)
+    opts=blendoptions!(default_options();kwargs...)
+
+    flags=makeflags(opts,:triangle)
+    
+    if opts[:verbose]
+        @show flags
     end
-        
-    triout,vorout=Triangulate.triangulate(flags,input)
-
-    pointlist=triout.pointlist
-    if eltype(pointlist)!=Float64
-        pointlist=Array{Float64,2}(pointlist)
+    if !isnothing(opts[:unsuitable])
+        triunsuitable(opts[:unsuitable])
     end
     
+    triout,vorout=Triangulate.triangulate(flags,input)
+    
+    pointlist=triout.pointlist
+
     trianglelist=triout.trianglelist
-    if eltype(trianglelist)!=Int32
-        trianglelist=Array{Int32,2}(trianglelist)
-    end
 
     cellregions=Vector{Int32}(vec(triout.triangleattributelist))
     
     segmentlist=triout.segmentlist
-    if eltype(segmentlist)!=Int32
-        segmentlist=Array{Int32,2}(segmentlist)
-    end
     
     segmentmarkerlist=triout.segmentmarkerlist
-    if eltype(segmentmarkerlist)!=Int32
-        segmentmarkerlist=Array{Int32,2}(segmentmarkerlist)
-    end
-
+    
     ExtendableGrids.simplexgrid(pointlist,trianglelist,cellregions,segmentlist,segmentmarkerlist)
 end
 
@@ -56,22 +46,22 @@ indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
 
 """
-function triangulateio(;flags::String="pAaqDQ",
-                       points=Array{Cdouble,2}(undef,0,0),
+function triangulateio(;points=Array{Cdouble,2}(undef,0,0),
                        bfaces=Array{Cint,2}(undef,0,0),
                        bfaceregions=Array{Cint,1}(undef,0),
                        regionpoints=Array{Cdouble,2}(undef,0,0),
                        regionnumbers=Array{Cint,1}(undef,0),
                        regionvolumes=Array{Cdouble,1}(undef,0)
                        )
-    @assert ndims(points)==2
+
+    ndims(points)==2 || throw(DimensionMismatch("Wrong space dimension"))
     if size(points,2)==2
         points=transpose(points)
     end
     if typeof(points)!=Array{Cdouble,2}
         points=Array{Cdouble,2}(points)
     end
-    @assert(size(points,2)>2)
+    size(points,2)>2  || throw(ErrorException("Expected more than 2 input points"))
     
     @assert ndims(bfaces)==2
     if size(bfaces,2)==2
@@ -82,13 +72,13 @@ function triangulateio(;flags::String="pAaqDQ",
     end
     # @assert(size(bfaces,2)>0)
     
-    @assert ndims(bfaceregions)==1
-    @assert size(bfaceregions,1)==size(bfaces,2)
+    ndims(bfaceregions)==1 || throw(DimensionMismatch("bfaceregions must be vector"))
+    size(bfaceregions,1) == size(bfaces,2) || throw(DimensionMismatch("size(bfaceregions,1) != size(bfaces,2)"))
     if typeof(bfaceregions)!=Array{Cint,1}
         bfaceregions=Array{Cint,1}(bfaceregions)
     end
     
-    @assert ndims(regionpoints)==2
+    ndims(regionpoints)==2 || throw(DimensionMismatch("Region point must be 2D"))
     if size(regionpoints,1)!=2
         regionpoints=transpose(regionpoints)
     end
@@ -97,10 +87,10 @@ function triangulateio(;flags::String="pAaqDQ",
     end
     # @assert(size(regionpoints,2)>0)
     
-    @assert ndims(regionnumbers)==1
-    @assert ndims(regionvolumes)==1
-    @assert size(regionnumbers,1)==size(regionpoints,2)
-    @assert size(regionvolumes,1)==size(regionpoints,2)
+    @assert ndims(regionnumbers) ==1 || throw(DimensionMismatch("regionnumbers  must be vector"))
+    @assert ndims(regionvolumes) ==1 || throw(DimensionMismatch("regionvolumes  must be vector"))
+    @assert size(regionnumbers,1) == size(regionpoints,2) || throw(DimensionMismatch("size(regionnumbers,1) != size(regionpoints,2)"))
+    @assert size(regionvolumes,1) == size(regionpoints,2) || throw(DimensionMismatch("size(regionvolumes,1) !== size(regionpoints,2)"))
     
     nholes=0
     nregions=0
@@ -112,8 +102,6 @@ function triangulateio(;flags::String="pAaqDQ",
         end
     end
 
-
-    
     regionlist=Array{Cdouble,2}(undef,4,nregions)
     holelist=Array{Cdouble,2}(undef,2,nholes)
     
@@ -132,19 +120,50 @@ function triangulateio(;flags::String="pAaqDQ",
             iregion+=1
         end
     end
+
+    
     tio=Triangulate.TriangulateIO()
     tio.pointlist=points
+
     if size(bfaces,2)>0
         tio.segmentlist=bfaces
     end
+
     if size(bfaceregions,1)>0
         tio.segmentmarkerlist=bfaceregions
     end
+
     if size(regionlist,2)>0
         tio.regionlist=regionlist
     end
+
     if size(holelist,2)>0
         tio.holelist=holelist
     end
+
     tio
 end
+
+
+"""
+(TYPEDSIGNATURES)
+
+Create triangle input from the current state of the builder.
+"""
+function triangulateio(this::SimplexGridBuilder)
+    dim_space(this)==2 || throw(error("dimension !=2 not implemented"))
+    facets=Array{Cint,2}(undef,2,length(this.facets))
+    for i=1:length(this.facets)
+        facets[1,i]=this.facets[i][1]
+        facets[2,i]=this.facets[i][2]
+    end
+    
+    triangulateio(points=this.points,
+                  bfaces=facets,
+                  bfaceregions=this.facetregions,
+                  regionpoints=this.regionpoints,
+                  regionnumbers=this.regionnumbers,
+                  regionvolumes=this.regionvolumes)
+    
+end
+
