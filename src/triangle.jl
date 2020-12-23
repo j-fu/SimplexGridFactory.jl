@@ -24,7 +24,12 @@ function ExtendableGrids.simplexgrid(input::Triangulate.TriangulateIO; kwargs...
 
     trianglelist=triout.trianglelist
 
-    cellregions=Vector{Int32}(vec(triout.triangleattributelist))
+    if size(triout.triangleattributelist,2)==0
+        # Add default for cellregions if that was not created
+        cellregions=ones(Int32,size(trianglelist,2))
+    else
+        cellregions=Vector{Int32}(vec(triout.triangleattributelist))
+    end
     
     segmentlist=triout.segmentlist
     

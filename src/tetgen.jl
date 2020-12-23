@@ -26,7 +26,11 @@ function ExtendableGrids.simplexgrid(input::TetGen.RawTetGenIO;kwargs...)
     
     tetrahedronlist=tetout.tetrahedronlist
     
-    cellregions=Vector{Int32}(vec(tetout.tetrahedronattributelist))
+    if size(tetout.tetrahedronattributelist,2)==0
+        cellregions=ones(Int32,size(tetrahedronlist,2))
+    else
+        cellregions=Vector{Int32}(vec(tetout.tetrahedronattributelist))
+    end
     
     segmentlist=tetout.trifacelist
     
@@ -48,8 +52,7 @@ indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
 
 """
-function tetgenio(;flags::String="pAaqDQ",
-                  points=Array{Cdouble,2}(undef,0,0),
+function tetgenio(;points=Array{Cdouble,2}(undef,0,0),
                   bfaces=Array{Cint,2}(undef,0,0),
                   bfaceregions=Array{Cint,1}(undef,0),
                   regionpoints=Array{Cdouble,2}(undef,0,0),
@@ -158,7 +161,7 @@ function tetgenio(this::SimplexGridBuilder)
     dim_space(this)=3 || throw(error("dimension !=2 not implemented"))
     
    tetgenio(points=this.points,
-            bfaces=facets,
+            bfaces=this.facets,
             bfaceregions=this.facetregions,
             regionpoints=this.regionpoints,
             regionnumbers=this.regionnumbers,

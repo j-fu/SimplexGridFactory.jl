@@ -2,6 +2,7 @@ using Test
 using SimplexGridFactory
 using ExtendableGrids
 using Triangulate
+using TetGen
 using LinearAlgebra
 
 @testset "Basic triangulation 2d" begin
@@ -185,8 +186,8 @@ end
 end
 
 @testset "SimplexGridBuilder 3d" begin
-    
-    function test_buildercube(;kwargs...)
+
+    function test_buildercube0(;kwargs...)
         
         builder=SimplexGridBuilder(dim=3)
         cellregion!(builder,1)
@@ -216,13 +217,21 @@ end
         facet!(builder,p3 ,p4 ,p8 ,p7)  
         facetregion!(builder,6)
         facet!(builder,p4 ,p1 ,p5 ,p8)
+        builder
+    end
         
+    function test_buildercube(;kwargs...)
+        builder=test_buildercube0(;kwargs...)
         grid=simplexgrid(builder;kwargs...)
         
         (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
 
+    
+    @test SimplexGridFactory.tetgenio(test_buildercube0()) isa RawTetGenIO
     @test test_buildercube(unsuitable=test_tetunsuitable)==(223, 971, 198)
+
+
     
 end
 
@@ -234,6 +243,7 @@ end
     
 @testset "examples2d.jl" begin    
     include("../examples/examples2d.jl")
+    @test SimplexGridFactory.triangulateio(triangulation_of_domain()) isa TriangulateIO
     @test testgrid(triangulation_of_domain(),(10,8,10))
     @test testgrid(nicer_triangulation_of_domain(),(187,306,66))
     @test testgrid(triangulation_of_domain_with_subregions(),(146,243,55))
