@@ -2,7 +2,9 @@
 $(TYPEDEF)
     
 Simplex grid builder: wrapper around array based mesh generator interface.
-    It allows to build up the input data incrementally.
+It allows to build up the input data incrementally.
+
+Up to now the implementation complexity is far from optimal.
 """
 mutable struct SimplexGridBuilder
     current_facetregion::Cint
@@ -16,6 +18,7 @@ mutable struct SimplexGridBuilder
     regionnumbers::Vector{Cint}
     regionvolumes::Vector{Cdouble}
     options::Dict{Symbol, Any}
+    checkexisting::Bool
     SimplexGridBuilder(x::Nothing) = new()
 end
 
@@ -25,7 +28,7 @@ end
 $(SIGNATURES)
 Create a SimplexGridBuilder.
 """
-function SimplexGridBuilder(;dim=2,tol=1.0e-12)
+function SimplexGridBuilder(;dim=2,tol=1.0e-12,checkexisting=true)
     this=SimplexGridBuilder(nothing)
     this.current_facetregion=1
     this.current_cellregion=1
@@ -39,10 +42,16 @@ function SimplexGridBuilder(;dim=2,tol=1.0e-12)
     this.regionvolumes=[]
     this.regionnumbers=[]
     this.options=default_options()
+    this.checkexisting=checkexisting
     this
 end
 
+"""
+$(SIGNATURES)
 
+Whether to check for already existing points
+"""
+checkexisting!(builder,b)=this.checkexisting=b
 
 """
 $(SIGNATURES)
@@ -102,11 +111,13 @@ end
 $(SIGNATURES)
 Add point or merge with already existing point. Return its index.
 """    
-function point!(this::SimplexGridBuilder,x)
+function point!(this::SimplexGridBuilder,x::Number)
     dim_space(this)==1||throw(DimensionMismatch())
-    p=_findpoint(this,x)
-    if p>0
-        return p
+    if this.checkexisting 
+        p=_findpoint(this,x)
+        if p>0
+            return p
+        end
     end
     append!(this.points,x)
     size(this.points,2)
@@ -118,9 +129,11 @@ Add point or merge with already existing point. Return its index.
 """    
 function point!(this::SimplexGridBuilder,x,y)
     dim_space(this)==2||throw(DimensionMismatch())
-    p=_findpoint(this,x,y)
-    if p>0
-        return p
+    if this.checkexisting 
+        p=_findpoint(this,x,y)
+        if p>0
+            return p
+        end
     end
     append!(this.points,(x,y))
     size(this.points,2)
@@ -132,9 +145,11 @@ Add point or merge with already existing point. Return its index.
 """    
 function point!(this::SimplexGridBuilder,x,y,z)
     dim_space(this)==3||throw(DimensionMismatch())
-    p=_findpoint(this,x,y,z)
-    if p>0
-        return p
+    if this.checkexisting 
+        p=_findpoint(this,x,y,z)
+        if p>0
+            return p
+        end
     end
     append!(this.points,(x,y,z))
     size(this.points,2)
@@ -144,7 +159,7 @@ end
 $(TYPEDSIGNATURES)
 Add point or merge with already existing point. Return its index.
 """    
-point!(this::SimplexGridBuilder, p::Union{Vector,Tuple})=point!(this,p...)
+point!(this::SimplexGridBuilder, p::Union{AbstractVector,Tuple})=point!(this,p...)
 
 """
 $(TYPEDSIGNATURES)

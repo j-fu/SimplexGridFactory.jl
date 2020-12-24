@@ -1,11 +1,9 @@
-#push!(LOAD_PATH,"../src/")
 ENV["MPLBACKEND"]="agg"
 using Documenter, SimplexGridFactory, ExtendableGrids, Literate, PyPlot
 
-
-examples2d=joinpath(@__DIR__,"..","examples","examples2d.jl")
 example_md_dir  = joinpath(@__DIR__,"src","examples")
 
+examples2d=joinpath(@__DIR__,"..","examples","examples2d.jl")
 include(examples2d)
 
 function makeplots(picdir)

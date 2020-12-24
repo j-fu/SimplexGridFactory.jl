@@ -24,4 +24,10 @@ export triangleflags,flags!,flags, appendflags!
 export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
 export simplexgrid
 
+
+include("primitives.jl")
+export circle!,rect2d!,rect3d!,sphere!
+export circle,rect2d,rect3d,sphere 
+
+
 end # module
