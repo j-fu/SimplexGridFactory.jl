@@ -16,7 +16,7 @@ Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
 [compat]
 DocStringExtensions = "^0.8.0"
 ElasticArrays = "^1.2"
-ExtendableGrids = "^0.6.0"
+ExtendableGrids = "^0.6.2"
 TetGen = "^1.1"
 Triangulate = "^1.0"
 julia = "^1.3"

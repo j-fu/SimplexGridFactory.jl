@@ -7,7 +7,6 @@ function circle!(builder::SimplexGridBuilder, center, radius; n=20)
     builder
 end
 
-circle(center, radius; n=20)=circle!(SimplexGridBuilder(dim=2),center,radius;n=n)
 
 function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     if isnothing(facetregions)
@@ -31,14 +30,13 @@ function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     builder
 end
 
-rect2d(PA,PB;facetregions=1)=rect2d!(SimplexGridBuilder(dim=2),PA,PB,facetregions=facetregions)
 
 function rect3d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     if isnothing(facetregions)
         facetregions=fill(builder.current_facetregion,6)
     end
     if isa(facetregions,Number)
-        facetregions=ones(6)
+        facetregions=ones(facetregions,6)
     end
     p1=point!(builder,PA[1],PA[2],PA[3])
     p2=point!(builder,PB[1],PA[2],PA[3])
@@ -65,7 +63,6 @@ function rect3d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
 end
 
 
-rect3d(PA,PB;facetregions=1)=rect3d!(SimplexGridBuilder(dim=3),PA,PB,facetregions=facetregions)
 
 
 function refine(coord,tri)
@@ -74,11 +71,11 @@ function refine(coord,tri)
     # Also, we should kill allocations
 
     function pinsert(p,istop)
-        for i=size(coord,2):-1:istop
-            @views if p≈coord[:,i]
-                return i
-            end
-        end
+        # for i=size(coord,2):-1:istop
+        #     @views if p≈coord[:,i]
+        #         return i
+        #     end
+        # end
         append!(coord,p)
         return size(coord,2)
     end
@@ -130,7 +127,7 @@ function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
         @time coord,tri=refine(coord,tri)
     end
     
-    @time pts=[point!(builder,(radius*coord[:,i].-center)) for i=1:size(coord,2) ]
+    @time pts=[point!(builder,(radius*coord[:,i].+center)) for i=1:size(coord,2) ]
     for i=1:size(tri,2)
          facet!(builder, pts[tri[1,i]],pts[tri[2,i]],pts[tri[3,i]])
     end
@@ -139,4 +136,7 @@ function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
 end
 
 
-sphere(center, radius; nref=3,checkexisting=true)=sphere!(SimplexGridBuilder(dim=3,checkexisting=checkexisting),center,radius;nref=nref)
+
+
+
+

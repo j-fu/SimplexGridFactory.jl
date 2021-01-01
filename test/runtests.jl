@@ -252,3 +252,8 @@ end
     @test testgrid(swiss_cheese_2d(),(1475, 2526,496))
 end;
 
+@testset "examples3d.jl" begin    
+    include("../examples/examples3d.jl")
+    @test testgrid(tetrahedralization_of_cube(),(718,2456,1094))
+    @test testgrid(tet_cube_with_primitives(),(5658,27324,6888))
+end;

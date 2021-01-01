@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.17
+# v0.12.18
 
 using Markdown
 using InteractiveUtils
@@ -14,8 +14,8 @@ begin
 	# Trick pyplot into not using , as floating point decimal delimiter
 	# in certain language enviromnents
 	ENV["LC_NUMERIC"]="C";
-	PyPlot.svg(true);
-end
+	PyPlot.svg(true)
+end;
 
 # ╔═╡ 940b1996-fe9d-11ea-2fa4-8b72bee62b76
 md"""
@@ -62,7 +62,7 @@ __Set up a SimplexGridBuilder:__
 """
 
 # ╔═╡ 511b26c6-f920-11ea-1228-51c3750f495c
-function make_factory()
+function make_builder()
 	factory=SimplexGridBuilder(dim=2)
 	
 	#  Specfy points
@@ -88,7 +88,7 @@ function make_factory()
 	
 	# Fine elements in lower right region
 	cellregion!(factory,2)
-	cellvolume!(factory,0.01)
+	maxvolume!(factory,0.01)
 	regionpoint!(factory,0.9,0.5)
 	
 	# Activate unsuitable callback
@@ -97,7 +97,7 @@ function make_factory()
 end
 
 # ╔═╡ dd85d88e-44b3-11eb-3e31-c7dcbe07d0de
-builder=make_factory()
+builder=make_builder()
 
 # ╔═╡ 8f0bd5c0-f920-11ea-3b1c-db90fc95f990
 ExtendableGrids.plot(builder,Plotter=PyPlot,resolution=(600,600))
@@ -111,8 +111,8 @@ These are the Triangle control flags created from the default options:
 SimplexGridFactory.makeflags(builder.options,:triangle)
 
 # ╔═╡ Cell order:
-# ╠═940b1996-fe9d-11ea-2fa4-8b72bee62b76
-# ╠═bc6135b8-451f-11eb-106a-2f9c9a8229d7
+# ╟─940b1996-fe9d-11ea-2fa4-8b72bee62b76
+# ╟─bc6135b8-451f-11eb-106a-2f9c9a8229d7
 # ╠═d432ad64-f91f-11ea-2e48-4bc7472ac64c
 # ╟─f32d9f04-f923-11ea-3a4a-53cc3df5642c
 # ╟─fd27b44a-f923-11ea-2afb-d79f7e62e214

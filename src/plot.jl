@@ -1,11 +1,3 @@
-"""
-$(TYPEDSIGNATURES)
-
-Two panel plot of gridfactory and its output.
-
-
-"""
-ExtendableGrids.plot!(ctx::PlotterContext,gf::SimplexGridBuilder;kwargs...)=plot!(ExtendableGrids.update_context!(ctx,kwargs),ctx[:backend],gf)
 
 
 """
@@ -14,13 +6,11 @@ $(TYPEDSIGNATURES)
 Two panel plot of gridfactory with input and resulting grid
 See [`default_options`](@ref) for available `kwargs`.
 """
-ExtendableGrids.plot(gf::SimplexGridBuilder;Plotter=nothing,kwargs...)=plot!(ExtendableGrids.update_context!(PlotterContext(Plotter),kwargs),gf;kwargs...)
+ExtendableGrids.plot(gb::SimplexGridBuilder; Plotter=nothing,kwargs...)= ExtendableGrids.plot(plottertype(Plotter), gb,Plotter;kwargs...)
 
+function ExtendableGrids.plot(::Type{PyPlotType}, builder::SimplexGridBuilder,PyPlot ;kwargs...)
 
-# dispatched version
-function ExtendableGrids.plot!(ctx, ::Type{PyPlotType}, builder::SimplexGridBuilder;kwargs...)
-    PyPlot=ctx[:Plotter]
-    ExtendableGrids.prepare_figure!(ctx)
+    p=ExtendableGrids.PlotContext(Plotter=PyPlot, layout=(1,2), kwargs...)
 
     opts=blendoptions!(copy(builder.options);kwargs...)
     
@@ -50,6 +40,6 @@ function ExtendableGrids.plot!(ctx, ::Type{PyPlotType}, builder::SimplexGridBuil
     PyPlot.title("Out")
     Triangulate.plot(PyPlot,triout)
     PyPlot.tight_layout()
-    ctx[:figure]
+    PyPlot.gcf()
 end
 

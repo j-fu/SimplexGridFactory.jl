@@ -6,6 +6,9 @@ example_md_dir  = joinpath(@__DIR__,"src","examples")
 examples2d=joinpath(@__DIR__,"..","examples","examples2d.jl")
 include(examples2d)
 
+examples3d=joinpath(@__DIR__,"..","examples","examples3d.jl")
+include(examples3d)
+
 function makeplots(picdir)
     clf()
     ExtendableGrids.plot(triangulation_of_domain(), Plotter=PyPlot)
@@ -30,6 +33,21 @@ function makeplots(picdir)
     clf()
     ExtendableGrids.plot(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
+
+    clf()
+    ExtendableGrids.plot(swiss_cheese_2d(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
+
+    clf()
+    ExtendableGrids.plot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
+    savefig(joinpath(picdir,"tetrahedralization_of_cube.svg"))
+    
+    clf()
+    ExtendableGrids.plot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
+    savefig(joinpath(picdir,"tet_cube_with_primitives.svg"))
+
+ 
+
 end
 
     
@@ -37,6 +55,11 @@ end
 function mkdocs()
 
     Literate.markdown(examples2d,
+                      example_md_dir,
+                      documenter=false,
+                      info=false)
+
+    Literate.markdown(examples3d,
                       example_md_dir,
                       documenter=false,
                       info=false)
