@@ -13,7 +13,7 @@ mutable struct SimplexGridBuilder
     point_identity_tolerance::Cdouble
     facetregions::Vector{Cint}
     facets::Vector{Vector{Cint}}
-    points::ElasticArray{Cdouble,2}
+    pointlist::BinnedPointList{Cdouble}
     regionpoints::ElasticArray{Cdouble,2}
     regionnumbers::Vector{Cint}
     regionvolumes::Vector{Cdouble}
@@ -37,7 +37,7 @@ function SimplexGridBuilder(;dim=2,tol=1.0e-12,checkexisting=true)
     this.point_identity_tolerance=tol
     this.facets=[]
     this.facetregions=[]
-    this.points=ElasticArray{Cdouble}(undef,dim,0)
+    this.pointlist=BinnedPointList(dim,tol=tol)
     this.regionpoints=ElasticArray{Cdouble}(undef,dim,0)
     this.regionvolumes=[]
     this.regionnumbers=[]
@@ -60,51 +60,8 @@ Set some mesh generation options, see [`default_options`](@ref)
 """
 options!(this::SimplexGridBuilder; kwargs...)=blendoptions!(this.options; kwargs...)
 
-ExtendableGrids.dim_space(this::SimplexGridBuilder)=size(this.points,1)
+ExtendableGrids.dim_space(this::SimplexGridBuilder)=size(this.pointlist.points,1)
 
-
-
-function _findpoint(this::SimplexGridBuilder,x)
-    if this.point_identity_tolerance<0.0
-        return 0
-    end
-    for i=1:size(this.points,2)
-        dx=x-this.points[1,i]
-        if abs(dx)<this.point_identity_tolerance
-            return i
-        end
-    end
-    return 0
-end
-
-function _findpoint(this::SimplexGridBuilder,x,y)
-    if this.point_identity_tolerance<0.0
-        return 0
-    end
-    for i=1:size(this.points,2)
-        dx=x-this.points[1,i]
-        dy=y-this.points[2,i]
-        if abs(dx^2+dy^2)<this.point_identity_tolerance^2
-            return i
-        end
-    end
-    return 0
-end
-
-function _findpoint(this::SimplexGridBuilder,x,y,z)
-    if this.point_identity_tolerance<0.0
-        return 0
-    end
-    for i=1:size(this.points,2)
-        dx=x-this.points[1,i]
-        dy=y-this.points[2,i]
-        dz=z-this.points[3,i]
-        if abs(dx^2+dy^2+dz^2)<this.point_identity_tolerance^2
-            return i
-        end
-    end
-    return 0
-end
 
 
 """
@@ -113,14 +70,7 @@ Add point or merge with already existing point. Return its index.
 """    
 function point!(this::SimplexGridBuilder,x::Number)
     dim_space(this)==1||throw(DimensionMismatch())
-    if this.checkexisting 
-        p=_findpoint(this,x)
-        if p>0
-            return p
-        end
-    end
-    append!(this.points,x)
-    size(this.points,2)
+    insert!(this.pointlist,[x])
 end
 
 """
@@ -129,14 +79,7 @@ Add point or merge with already existing point. Return its index.
 """    
 function point!(this::SimplexGridBuilder,x,y)
     dim_space(this)==2||throw(DimensionMismatch())
-    if this.checkexisting 
-        p=_findpoint(this,x,y)
-        if p>0
-            return p
-        end
-    end
-    append!(this.points,(x,y))
-    size(this.points,2)
+    insert!(this.pointlist,[x,y])
 end
 
 """
@@ -145,14 +88,7 @@ Add point or merge with already existing point. Return its index.
 """    
 function point!(this::SimplexGridBuilder,x,y,z)
     dim_space(this)==3||throw(DimensionMismatch())
-    if this.checkexisting 
-        p=_findpoint(this,x,y,z)
-        if p>0
-            return p
-        end
-    end
-    append!(this.points,(x,y,z))
-    size(this.points,2)
+    insert!(this.pointlist,[x,y,z])
 end
 
 """
@@ -353,7 +289,7 @@ function ExtendableGrids.simplexgrid(this::SimplexGridBuilder; kwargs...)
     
     options=blendoptions!(copy(this.options);kwargs...)
     
-    ExtendableGrids.simplexgrid(points=this.points,
+    ExtendableGrids.simplexgrid(points=this.pointlist.points,
                                 bfaces=facets,
                                 bfaceregions=this.facetregions,
                                 regionpoints=this.regionpoints,

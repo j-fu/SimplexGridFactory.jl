@@ -160,7 +160,7 @@ Create tetgen input from the current state of the builder.
 function tetgenio(this::SimplexGridBuilder)
     dim_space(this)=3 || throw(error("dimension !=2 not implemented"))
     
-   tetgenio(points=this.points,
+   tetgenio(points=this.pointlist.points,
             bfaces=this.facets,
             bfaceregions=this.facetregions,
             regionpoints=this.regionpoints,

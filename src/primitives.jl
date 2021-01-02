@@ -67,18 +67,14 @@ end
 
 function refine(coord,tri)
     # Short and trivial method, without creating edges,
-    # so we have this search in the pointlist...
-    # Also, we should kill allocations
+    # and with doubling points (relying on binned point list
+    # upon insertion into builder
 
     function pinsert(p,istop)
-        # for i=size(coord,2):-1:istop
-        #     @views if p≈coord[:,i]
-        #         return i
-        #     end
-        # end
         append!(coord,p)
         return size(coord,2)
     end
+
     rscale(p)=@. p/sqrt(p[1]^2+p[2]^2+p[3]^2)
     
     newtri=ElasticArray{Cint}(undef,3,0)
@@ -91,9 +87,12 @@ function refine(coord,tri)
         p1=coord[:,i1]
         p2=coord[:,i2]
         p3=coord[:,i3]
+
+        # new points inserted on the spere
         i12=pinsert(rscale((p1+p2)/2),istop)
         i13=pinsert(rscale((p1+p3)/2),istop)
         i23=pinsert(rscale((p2+p3)/2),istop)
+
         append!(newtri,(i1,i12,i13))
         append!(newtri,(i2,i12,i23))
         append!(newtri,(i3,i23,i13))
@@ -104,15 +103,16 @@ end
 
 
 function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
+    # Initial octahedron
     q=1.0/sqrt(2)
     
-    coord=[-q -q  0;
-           -q  q  0;
-           q  q  0;
-           q -q  0;
-           0   0 -1;
-           0   0  1]'
-    coord=ElasticArray(coord)
+    coord=ElasticArray([-q -q  0;
+                        -q  q  0;
+                        q  q  0;
+                        q -q  0;
+                        0   0 -1;
+                        0   0  1]')
+
     tri=[1 2 5;
          2 3 5;
          3 4 5;
@@ -122,16 +122,16 @@ function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
          3 4 6;
          4 1 6]'
 
-    @show nref
     for iref=1:nref
-        @time coord,tri=refine(coord,tri)
+        coord,tri=refine(coord,tri)
     end
     
-    @time pts=[point!(builder,(radius*coord[:,i].+center)) for i=1:size(coord,2) ]
-    for i=1:size(tri,2)
-         facet!(builder, pts[tri[1,i]],pts[tri[2,i]],pts[tri[3,i]])
-    end
+    @views pts=[point!(builder,(radius*coord[:,i].+center)) for i=1:size(coord,2) ]
 
+    for i=1:size(tri,2)
+        facet!(builder, pts[tri[1,i]],pts[tri[2,i]],pts[tri[3,i]])
+    end
+    
     builder
 end
 

@@ -1,27 +1,34 @@
 module SimplexGridFactory
+
+using Printf
+using LinearAlgebra
+
+
 using ExtendableGrids
 using Triangulate
-using Printf
 using TetGen
 using DocStringExtensions
 using ElasticArrays
 
 
 include("options.jl")
+export triangleflags,flags!,flags, appendflags!
+
+include("binnedpointlist.jl")
+export  BinnedPointList
 
 include("simplexgridbuilder.jl")
+export SimplexGridBuilder
+export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
 
 include("simplexgrid.jl")
+export simplexgrid
 
 include("triangle.jl")
 
 include("tetgen.jl")
 
-
 export SimplexGridBuilder
-export triangleflags,flags!,flags, appendflags!
-export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
-export simplexgrid
 
 include("primitives.jl")
 export circle!,rect2d!,rect3d!,sphere!

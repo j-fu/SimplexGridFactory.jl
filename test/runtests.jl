@@ -5,7 +5,7 @@ using Triangulate
 using TetGen
 using LinearAlgebra
 
-@testset "Basic triangulation 2d" begin
+@testset " Basic triangulation 2d" begin
     function test_ctriangulateio()
         nodes=Matrix{Cdouble}([1.0 0.0 ; 0.0 1.0 ; -1.0 0.0 ; 0.0 -1.0]')
         faces=Matrix{Cint}([1 2 ; 2 3 ; 3 4 ; 4 1 ]')
@@ -49,6 +49,36 @@ using LinearAlgebra
     @test test_triangulateio()
     
 end
+@testset "        BinnedPointList" begin
+
+    function testbinning(a)
+        dim=size(a,1)
+        n=size(a,2)
+        idx=rand(1:n,n÷4)
+        a1=a[:,idx]
+
+        bpl=BinnedPointList(dim)
+        for i=1:size(a,2)
+            insert!(bpl,a[:,i])
+        end
+        
+        for i=1:size(a1,2)
+            ix=insert!(bpl,a1[:,i])
+            if ix!=idx[i]
+                return false
+            end
+        end
+        true
+    end
+
+
+    @test testbinning(rand(1,10))
+    @test testbinning(rand(1,10000))
+    @test testbinning(rand(2,10))
+    @test testbinning(rand(2,10000))
+    @test testbinning(rand(3,10))
+    @test testbinning(rand(3,10000))
+end
 
 
 
@@ -63,7 +93,7 @@ function test_triunsuitable(x1,y1,x2,y2,x3,y3, area)
     end
 end
 
-@testset "Simplexgrid from arrays 2D & kwargs" begin
+@testset "Simplexgrid (arrays 2d)" begin
     function test_simplesquare(;kwargs...)
         grid=simplexgrid(points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
                          bfaces=[1 2 ; 2 3 ; 3 4 ; 4 1 ]',
@@ -84,7 +114,7 @@ end
     @test test_simplesquare(unsuitable=test_triunsuitable)==(299, 550, 46)
 end
 
-@testset "SimplexGridBuilder 2d" begin
+@testset "  SimplexGridBuilder 2d" begin
     
     function test_buildersquare(;kwargs...)
         
@@ -149,7 +179,7 @@ function test_tetunsuitable(pa,pb,pc,pd)
 end
 
 
-@testset "Simplexgrid from arrays 3D & kwargs" begin
+@testset "Simplexgrid (arrays 3d)" begin
     
     function test_simplecube(;kwargs...)
         
@@ -185,7 +215,7 @@ end
     
 end
 
-@testset "SimplexGridBuilder 3d" begin
+@testset "  SimplexGridBuilder 3d" begin
 
     function test_buildercube0(;kwargs...)
         
@@ -241,7 +271,7 @@ function testgrid(grid_or_builder,testdata)
 end
 
     
-@testset "examples2d.jl" begin    
+@testset "          examples2d.jl" begin    
     include("../examples/examples2d.jl")
     @test SimplexGridFactory.triangulateio(triangulation_of_domain()) isa TriangulateIO
     @test testgrid(triangulation_of_domain(),(10,8,10))
@@ -252,7 +282,7 @@ end
     @test testgrid(swiss_cheese_2d(),(1475, 2526,496))
 end;
 
-@testset "examples3d.jl" begin    
+@testset "          examples3d.jl" begin    
     include("../examples/examples3d.jl")
     @test testgrid(tetrahedralization_of_cube(),(718,2456,1094))
     @test testgrid(tet_cube_with_primitives(),(5658,27324,6888))

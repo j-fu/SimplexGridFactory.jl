@@ -151,7 +151,7 @@ end
 
 
 """
-(TYPEDSIGNATURES)
+$(TYPEDSIGNATURES)
 
 Create triangle input from the current state of the builder.
 """
@@ -163,7 +163,7 @@ function triangulateio(this::SimplexGridBuilder)
         facets[2,i]=this.facets[i][2]
     end
     
-    triangulateio(points=this.points,
+    triangulateio(points=this.pointlist.points,
                   bfaces=facets,
                   bfaceregions=this.facetregions,
                   regionpoints=this.regionpoints,

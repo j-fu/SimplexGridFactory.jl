@@ -4,18 +4,26 @@ Markdown.parse("""
 $(read("../../README.md",String))
 """)
 ````
-## API Documentation
+# API Documentation
 
-### Mesh generator interface
+## Mesh generator interface
 
 ```@autodocs
 Modules = [SimplexGridFactory]
 Pages = ["triangle.jl","tetgen.jl","options.jl","simplexgrid.jl"]
 ```
 
-### SimplexGridBuilder
+## SimplexGridBuilder
 
 ```@autodocs
 Modules = [SimplexGridFactory]
 Pages = ["simplexgridbuilder.jl","plot.jl"]
+```
+
+
+## BinnedPointList
+
+```@autodocs
+Modules = [SimplexGridFactory]
+Pages = ["binnedpointlist.jl"]
 ```
