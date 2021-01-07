@@ -11,39 +11,39 @@ include(examples3d)
 
 function makeplots(picdir)
     clf()
-    ExtendableGrids.plot(triangulation_of_domain(), Plotter=PyPlot)
+    gridplot(triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain.svg"))
     
     clf()
-    ExtendableGrids.plot(nicer_triangulation_of_domain(), Plotter=PyPlot)
+    gridplot(nicer_triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"nicer_triangulation_of_domain.svg"))
     
     clf()
-    ExtendableGrids.plot(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
+    gridplot(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain_with_subregions.svg"))
     
     clf()
-    ExtendableGrids.plot(square_localref(), Plotter=PyPlot)
+    gridplot(square_localref(), Plotter=PyPlot)
     savefig(joinpath(picdir,"square_localref.svg"))
     
     clf()
-    ExtendableGrids.plot(direct_square(), Plotter=PyPlot)
+    gridplot(direct_square(), Plotter=PyPlot)
     savefig(joinpath(picdir,"direct_square.svg"))
     
     clf()
-    ExtendableGrids.plot(swiss_cheese_2d(), Plotter=PyPlot)
+    gridplot(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    ExtendableGrids.plot(swiss_cheese_2d(), Plotter=PyPlot)
+    gridplot(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    ExtendableGrids.plot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
+    gridplot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
     savefig(joinpath(picdir,"tetrahedralization_of_cube.svg"))
     
     clf()
-    ExtendableGrids.plot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
+    gridplot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
     savefig(joinpath(picdir,"tet_cube_with_primitives.svg"))
 
  

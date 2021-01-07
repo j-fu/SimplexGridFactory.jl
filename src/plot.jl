@@ -3,14 +3,14 @@
 """
 $(TYPEDSIGNATURES)
 
-Two panel plot of gridfactory with input and resulting grid
+Two panel gridplot of gridfactory with input and resulting grid
 See [`default_options`](@ref) for available `kwargs`.
 """
-ExtendableGrids.plot(gb::SimplexGridBuilder; Plotter=nothing,kwargs...)= ExtendableGrids.plot(plottertype(Plotter), gb,Plotter;kwargs...)
+ExtendableGrids.gridplot(gb::SimplexGridBuilder; Plotter=nothing,kwargs...)= ExtendableGrids.gridplot(plottertype(Plotter), gb,Plotter;kwargs...)
 
-function ExtendableGrids.plot(::Type{PyPlotType}, builder::SimplexGridBuilder,PyPlot ;kwargs...)
+function ExtendableGrids.gridplot(::Type{PyPlotType}, builder::SimplexGridBuilder,PyPlot ;kwargs...)
 
-    p=ExtendableGrids.PlotContext(Plotter=PyPlot, layout=(1,2), kwargs...)
+    p=ExtendableGrids.GridPlotContext(Plotter=PyPlot, layout=(1,2), kwargs...)
 
     opts=blendoptions!(copy(builder.options);kwargs...)
     
