@@ -1,5 +1,6 @@
 ENV["MPLBACKEND"]="agg"
 using Documenter, SimplexGridFactory, ExtendableGrids, Literate, PyPlot
+using .GridVisualize
 
 example_md_dir  = joinpath(@__DIR__,"src","examples")
 
@@ -11,39 +12,39 @@ include(examples3d)
 
 function makeplots(picdir)
     clf()
-    gridplot(triangulation_of_domain(), Plotter=PyPlot)
+    visualize(triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain.svg"))
     
     clf()
-    gridplot(nicer_triangulation_of_domain(), Plotter=PyPlot)
+    visualize(nicer_triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"nicer_triangulation_of_domain.svg"))
     
     clf()
-    gridplot(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
+    visualize(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain_with_subregions.svg"))
     
     clf()
-    gridplot(square_localref(), Plotter=PyPlot)
+    visualize(square_localref(), Plotter=PyPlot)
     savefig(joinpath(picdir,"square_localref.svg"))
     
     clf()
-    gridplot(direct_square(), Plotter=PyPlot)
+    visualize(direct_square(), Plotter=PyPlot)
     savefig(joinpath(picdir,"direct_square.svg"))
     
     clf()
-    gridplot(swiss_cheese_2d(), Plotter=PyPlot)
+    visualize(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    gridplot(swiss_cheese_2d(), Plotter=PyPlot)
+    visualize(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    gridplot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
+    visualize(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
     savefig(joinpath(picdir,"tetrahedralization_of_cube.svg"))
     
     clf()
-    gridplot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
+    visualize(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
     savefig(joinpath(picdir,"tet_cube_with_primitives.svg"))
 
  
