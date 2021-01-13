@@ -5,6 +5,7 @@ using LinearAlgebra
 
 
 using ExtendableGrids
+using GridVisualize
 using Triangulate
 using TetGen
 using DocStringExtensions
@@ -34,5 +35,6 @@ include("primitives.jl")
 export circle!,rect2d!,rect3d!,sphere!
 
 include("plot.jl")
+export builderplot
 
 end # module

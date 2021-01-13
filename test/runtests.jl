@@ -1,7 +1,7 @@
 using Test
 using SimplexGridFactory
 using ExtendableGrids
-using .GridVisualize
+using GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra

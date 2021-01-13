@@ -1,6 +1,6 @@
 ENV["MPLBACKEND"]="agg"
 using Documenter, SimplexGridFactory, ExtendableGrids, Literate, PyPlot
-using .GridVisualize
+using GridVisualize
 
 example_md_dir  = joinpath(@__DIR__,"src","examples")
 
@@ -12,39 +12,39 @@ include(examples3d)
 
 function makeplots(picdir)
     clf()
-    visualize(triangulation_of_domain(), Plotter=PyPlot)
+    builderplot(triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain.svg"))
     
     clf()
-    visualize(nicer_triangulation_of_domain(), Plotter=PyPlot)
+    builderplot(nicer_triangulation_of_domain(), Plotter=PyPlot)
     savefig(joinpath(picdir,"nicer_triangulation_of_domain.svg"))
     
     clf()
-    visualize(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
+    builderplot(triangulation_of_domain_with_subregions(), Plotter=PyPlot)
     savefig(joinpath(picdir,"triangulation_of_domain_with_subregions.svg"))
     
     clf()
-    visualize(square_localref(), Plotter=PyPlot)
+    builderplot(square_localref(), Plotter=PyPlot)
     savefig(joinpath(picdir,"square_localref.svg"))
     
     clf()
-    visualize(direct_square(), Plotter=PyPlot)
+    gridplot(direct_square(), Plotter=PyPlot)
     savefig(joinpath(picdir,"direct_square.svg"))
     
     clf()
-    visualize(swiss_cheese_2d(), Plotter=PyPlot)
+    builderplot(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    visualize(swiss_cheese_2d(), Plotter=PyPlot)
+    builderplot(swiss_cheese_2d(), Plotter=PyPlot)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    visualize(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
+    gridplot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
     savefig(joinpath(picdir,"tetrahedralization_of_cube.svg"))
     
     clf()
-    visualize(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
+    gridplot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
     savefig(joinpath(picdir,"tet_cube_with_primitives.svg"))
 
  
