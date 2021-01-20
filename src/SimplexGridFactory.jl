@@ -2,12 +2,11 @@ module SimplexGridFactory
 
 using Printf
 using LinearAlgebra
-
+using Pkg
+using UUIDs
 
 using ExtendableGrids
 using GridVisualize
-using Triangulate
-using TetGen
 using DocStringExtensions
 using ElasticArrays
 
@@ -21,6 +20,7 @@ export  BinnedPointList
 include("simplexgridbuilder.jl")
 export SimplexGridBuilder
 export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
+export istriangulate,istetgen
 
 include("simplexgrid.jl")
 export simplexgrid

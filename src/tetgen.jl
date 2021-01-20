@@ -6,7 +6,7 @@ Create Grid from TetGen data.
 See [`default_options`](@ref) for available `kwargs`.
 
 """
-function ExtendableGrids.simplexgrid(input::TetGen.RawTetGenIO;kwargs...)
+function ExtendableGrids.simplexgrid(::Type{TetGenType}, TetGen, input; kwargs...)
 
     opts=blendoptions!(default_options();kwargs...)
     
@@ -17,7 +17,7 @@ function ExtendableGrids.simplexgrid(input::TetGen.RawTetGenIO;kwargs...)
     end
     
     if !isnothing(opts[:unsuitable])
-        tetunsuitable(opts[:unsuitable])
+        TetGen.tetunsuitable(opts[:unsuitable])
     end
     
     tetout=TetGen.tetrahedralize(input,flags)
@@ -52,7 +52,7 @@ indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
 
 """
-function tetgenio(;points=Array{Cdouble,2}(undef,0,0),
+function tetgenio(TetGen;points=Array{Cdouble,2}(undef,0,0),
                   bfaces=Array{Cint,2}(undef,0,0),
                   bfaceregions=Array{Cint,1}(undef,0),
                   regionpoints=Array{Cdouble,2}(undef,0,0),
@@ -160,7 +160,7 @@ Create tetgen input from the current state of the builder.
 function tetgenio(this::SimplexGridBuilder)
     dim_space(this)=3 || throw(error("dimension !=2 not implemented"))
     
-   tetgenio(points=this.pointlist.points,
+   tetgenio(this.Generator,points=this.pointlist.points,
             bfaces=this.facets,
             bfaceregions=this.facetregions,
             regionpoints=this.regionpoints,

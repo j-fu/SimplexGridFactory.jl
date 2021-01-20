@@ -14,11 +14,16 @@
 # FEM and FVM computations. These are documented in [`default_options`](@ref)
 # Occasional [`options!`](@ref) statements in the examples overwrite these defaults.
 #
+#
+# This test code is released under the license conditions of
+# Triangulate.jl
+#
 
 
 using SimplexGridFactory
 using ExtendableGrids
 using LinearAlgebra
+using Triangulate
 
 # ## Domain triangulation
 # Here we just describe a domain as a polygon and
@@ -26,7 +31,7 @@ using LinearAlgebra
 #
 function triangulation_of_domain()
     
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
     
     p1=point!(builder,0,0)
     p2=point!(builder,1,0)
@@ -56,7 +61,7 @@ end
 # 
 function nicer_triangulation_of_domain()
     
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
 
     p1=point!(builder,0,0)
     p2=point!(builder,1,0)
@@ -89,7 +94,7 @@ end
 #
 function triangulation_of_domain_with_subregions()
     
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
 
     p1=point!(builder,0,0)
     p2=point!(builder,1,0)
@@ -129,8 +134,9 @@ end
 # directly. The aim of SimplexBuilder is to avoid
 # the tedious and error prone counting connected
 # with this approach.
-function direct_square()
-    simplexgrid(points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
+function direct_square(Generator=Triangulate)
+    simplexgrid(Generator;
+                points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
                 bfaces=[1 2 ; 2 3 ; 3 4 ; 4 1 ]',
                 bfaceregions=[1, 2, 3, 4],
                 regionpoints=[0.5 0.5;]',
@@ -148,7 +154,7 @@ end
 #
 function square_localref()
     
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
     cellregion!(builder,1)
     maxvolume!(builder,0.01)
     regionpoint!(builder,0.5,0.5)
@@ -202,7 +208,7 @@ function swiss_cheese_2d()
     end
 
 
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
     cellregion!(builder,1)
     maxvolume!(builder,0.1)
     regionpoint!(builder,0.1,0.1)
@@ -262,7 +268,7 @@ end
 # in its core is a `Dict{Type,Any}` and the possibility to [dispatch the return type on the key](https://j-fu.github.io/ExtendableGrids.jl/stable/tdict/).
 #
 function extract_2d()
-    builder=SimplexGridBuilder(dim=2)
+    builder=SimplexGridBuilder(Generator=Triangulate)
     
     p1=point!(builder,0,0)
     p2=point!(builder,1,0)

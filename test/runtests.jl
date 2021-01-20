@@ -1,3 +1,7 @@
+#
+# This test code is released under the license conditions of
+# TetGen.jl and Triangulate.jl
+#
 using Test
 using SimplexGridFactory
 using ExtendableGrids
@@ -44,7 +48,7 @@ using LinearAlgebra
         triin.segmentlist=Matrix{Int32}([1 2 ; 2 3 ; 3 4 ; 4 1 ]')
         triin.segmentmarkerlist=Vector{Int32}([1, 2, 3, 4])
         triin.regionlist=Matrix{Float64}([0.5 0.5 1 0.01;]')
-        grid=simplexgrid(triin,flags="paAqQ")
+        grid=simplexgrid(SimplexGridFactory.TriangulateType,Triangulate,triin,flags="paAqQ")
         num_nodes(grid)==177 && num_cells(grid)==319 && num_bfaces(grid)==33
     end
     @test test_triangulateio()
@@ -96,7 +100,8 @@ end
 
 @testset "Simplexgrid (arrays 2d)" begin
     function test_simplesquare(;kwargs...)
-        grid=simplexgrid(points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
+        grid=simplexgrid(Triangulate,
+                         points=[0 0 ; 0 1 ; 1 1 ; 1 0]',
                          bfaces=[1 2 ; 2 3 ; 3 4 ; 4 1 ]',
                          bfaceregions=[1, 2, 3, 4],
                          regionpoints=[0.5 0.5;]',
@@ -119,7 +124,7 @@ end
     
     function test_buildersquare(;kwargs...)
         
-        builder=SimplexGridBuilder(dim=2)
+        builder=SimplexGridBuilder(Generator=Triangulate)
         cellregion!(builder,1)
         maxvolume!(builder,0.01)
         regionpoint!(builder,0.5,0.5)
@@ -145,7 +150,7 @@ end
 
     function test_buildersquare1(;kwargs...)
         
-        builder=SimplexGridBuilder(dim=2)
+        builder=SimplexGridBuilder(Generator=Triangulate)
         cellregion!(builder,1)
         maxvolume!(builder,0.01)
         regionpoint!(builder,0.5,0.5)
@@ -184,7 +189,8 @@ end
     
     function test_simplecube(;kwargs...)
         
-        grid=simplexgrid(points=[0 0 0; 
+        grid=simplexgrid(TetGen,
+                         points=[0 0 0; 
                                  1 0 0; 
                                  1 1 0; 
                                  0 1 0; 
@@ -201,7 +207,7 @@ end
                                  4 1 5 8]',
                          bfaceregions=[i for i=1:6],
                          regionpoints=[0.5 0.5 0.5]',
-                     regionnumbers=[1],
+                         regionnumbers=[1],
                          regionvolumes=[0.01];
                          kwargs...
                          )
@@ -220,7 +226,7 @@ end
 
     function test_buildercube0(;kwargs...)
         
-        builder=SimplexGridBuilder(dim=3)
+        builder=SimplexGridBuilder(Generator=TetGen)
         cellregion!(builder,1)
         maxvolume!(builder,0.01)
         regionpoint!(builder,0.5,0.5,0.5)

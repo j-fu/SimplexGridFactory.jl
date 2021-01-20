@@ -7,6 +7,7 @@ It allows to build up the input data incrementally.
 Up to now the implementation complexity is far from optimal.
 """
 mutable struct SimplexGridBuilder
+    Generator::Union{Module,Nothing}
     current_facetregion::Cint
     current_cellregion::Cint
     current_cellvolume::Cdouble
@@ -22,14 +23,41 @@ mutable struct SimplexGridBuilder
     SimplexGridBuilder(x::Nothing) = new()
 end
 
+istetgen(g)=typeof(g)==Module && nameof(g)==:TetGen
+istriangulate(g)=typeof(g)==Module && nameof(g)==:Triangulate
 
+abstract type TetGenType  end
+abstract type TriangulateType  end
+
+function package_version(M)
+    deps=Pkg.dependencies()
+    uuid=findfirst(pkg->pkg.name==String(nameof(M)), deps)
+    isnothing(uuid) ?  v"0" : deps[uuid].version
+end
 
 """
 $(SIGNATURES)
 Create a SimplexGridBuilder.
 """
-function SimplexGridBuilder(;dim=2,tol=1.0e-12,checkexisting=true)
+function SimplexGridBuilder(;Generator=nothing,tol=1.0e-12,checkexisting=true)
     this=SimplexGridBuilder(nothing)
+
+    if isnothing(Generator)
+        throw(ArgumentError("Missing Generator: SimplexGridBuilder needs Generator=TetGen or Generator=Triangulate as argument"))
+    end
+
+    this.Generator=Generator
+    
+    if istetgen(Generator)
+        dim=3
+        @assert package_version(Generator) == v"1.1.1"
+    elseif istriangulate(Generator)
+        dim=2
+        @assert package_version(Generator) == v"1.0.1"
+    else
+        throw(ArgumentError("Wrong Generator: SimplexGridBuilder needs Generator=TetGen or Generator=Triangulate as argument"))
+    end
+    
     this.current_facetregion=1
     this.current_cellregion=1
     this.current_cellvolume=1
@@ -289,12 +317,14 @@ function ExtendableGrids.simplexgrid(this::SimplexGridBuilder; kwargs...)
     
     options=blendoptions!(copy(this.options);kwargs...)
     
-    ExtendableGrids.simplexgrid(points=this.pointlist.points,
+    ExtendableGrids.simplexgrid(this.Generator,
+                                points=this.pointlist.points,
                                 bfaces=facets,
                                 bfaceregions=this.facetregions,
                                 regionpoints=this.regionpoints,
                                 regionnumbers=this.regionnumbers,
-                                regionvolumes=this.regionvolumes;
+                                regionvolumes=this.regionvolumes,
+                                Generator=this.Generator;
                                 options...)
 end
 

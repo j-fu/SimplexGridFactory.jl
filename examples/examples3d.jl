@@ -15,10 +15,19 @@
 # ## Domain triangulation
 # Here we just describe a domain as a polygon and
 # mesh it.
+# This test code is released under the license conditions of
+# TetGen.jl
 #
+
+using SimplexGridFactory
+using ExtendableGrids
+using LinearAlgebra
+using TetGen
+
+
 function tetrahedralization_of_cube()
     
-    builder=SimplexGridBuilder(dim=3)
+    builder=SimplexGridBuilder(Generator=TetGen)
 
     p1=point!(builder,0,0,0)
     p2=point!(builder,1,0,0)
@@ -51,7 +60,7 @@ end
 # We can also use predefined primitives to combine geometries
 function tet_cube_with_primitives()
     
-    builder=SimplexGridBuilder(dim=3)
+    builder=SimplexGridBuilder(Generator=TetGen)
     facetregion!(builder,1)
     cellregion!(builder,1)
     maxvolume!(builder,0.1)

@@ -13,6 +13,9 @@ function builderplot(::Type{PyPlotType}, builder::SimplexGridBuilder,PyPlot ;kwa
     p=GridVisualizer(Plotter=PyPlot, layout=(1,2), kwargs...)
 
     opts=blendoptions!(copy(builder.options);kwargs...)
+
+    Triangulate=builder.Generator
+    @assert(istriangulate(Triangulate))
     
     flags=makeflags(opts,:triangle)
 
@@ -29,7 +32,7 @@ function builderplot(::Type{PyPlotType}, builder::SimplexGridBuilder,PyPlot ;kwa
     end
 
     if !isnothing(opts[:unsuitable])
-        triunsuitable(opts[:unsuitable])
+        Triangulate.triunsuitable(opts[:unsuitable])
     end
 
     triout,vorout=Triangulate.triangulate(flags,triin)

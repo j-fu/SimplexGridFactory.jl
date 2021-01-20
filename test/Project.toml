@@ -1,10 +1,7 @@
 [deps]
-Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
-PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
-SimplexGridFactory = "57bfcd06-606e-45d6-baf4-4ba06da0efd5"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TetGen = "c5d3f3f7-f850-59f6-8a2e-ffc6dc1317ea"
 Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"

@@ -5,17 +5,18 @@ Create Grid from Triangle input data.
 
 See [`default_options`](@ref) for available `kwargs`.
 """
-function ExtendableGrids.simplexgrid(input::Triangulate.TriangulateIO; kwargs...)
+function ExtendableGrids.simplexgrid(::Type{TriangulateType},Triangulate, input; kwargs...)
 
     opts=blendoptions!(default_options();kwargs...)
-
+    
     flags=makeflags(opts,:triangle)
+
     
     if opts[:verbose]
         @show flags
     end
     if !isnothing(opts[:unsuitable])
-        triunsuitable(opts[:unsuitable])
+        Triangulate.triunsuitable(opts[:unsuitable])
     end
     
     triout,vorout=Triangulate.triangulate(flags,input)
@@ -51,7 +52,8 @@ indicated in the defaults and the leading dimension of 2D arrays
 corresponds to the space dimension.
 
 """
-function triangulateio(;points=Array{Cdouble,2}(undef,0,0),
+function triangulateio(Triangulate;
+                       points=Array{Cdouble,2}(undef,0,0),
                        bfaces=Array{Cint,2}(undef,0,0),
                        bfaceregions=Array{Cint,1}(undef,0),
                        regionpoints=Array{Cdouble,2}(undef,0,0),
@@ -163,7 +165,8 @@ function triangulateio(this::SimplexGridBuilder)
         facets[2,i]=this.facets[i][2]
     end
     
-    triangulateio(points=this.pointlist.points,
+    triangulateio(this.Generator,
+                  points=this.pointlist.points,
                   bfaces=facets,
                   bfaceregions=this.facetregions,
                   regionpoints=this.regionpoints,
