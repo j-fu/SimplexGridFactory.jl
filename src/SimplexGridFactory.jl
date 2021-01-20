@@ -2,8 +2,6 @@ module SimplexGridFactory
 
 using Printf
 using LinearAlgebra
-using Pkg
-using UUIDs
 
 using ExtendableGrids
 using GridVisualize

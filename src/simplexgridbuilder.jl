@@ -29,11 +29,6 @@ istriangulate(g)=typeof(g)==Module && nameof(g)==:Triangulate
 abstract type TetGenType  end
 abstract type TriangulateType  end
 
-function package_version(M)
-    deps=Pkg.dependencies()
-    uuid=findfirst(pkg->pkg.name==String(nameof(M)), deps)
-    isnothing(uuid) ?  v"0" : deps[uuid].version
-end
 
 """
 $(SIGNATURES)
@@ -50,10 +45,18 @@ function SimplexGridBuilder(;Generator=nothing,tol=1.0e-12,checkexisting=true)
     
     if istetgen(Generator)
         dim=3
-        @assert package_version(Generator) == v"1.1.1"
+        # Heuristic version test via expected features. This could be made
+        # into a real test for later versions were we can have a constant TetGen.TetGenVersion
+        # for this purpose.
+        # Testing via pkg does not cover all relevant use cases.
+        if !isdefined(Generator,:tetunsuitable)
+            throw(ArgumentError("Outdated TetGen.jl version, need at least v1.1.1"))
+        end
     elseif istriangulate(Generator)
         dim=2
-        @assert package_version(Generator) == v"1.0.1"
+        if !isdefined(Generator,:tricircumcenter!)
+            throw(ArgumentError("Outdated Triangulate.jl version, need at least v1.0.1"))
+        end
     else
         throw(ArgumentError("Wrong Generator: SimplexGridBuilder needs Generator=TetGen or Generator=Triangulate as argument"))
     end

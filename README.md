@@ -9,6 +9,7 @@ SimplexGridFactory
 Contains convenience  interfaces to triangle (via  Triangulate.jl) and
 TetGen via TetGen.jl.  Code using it  needs to pass the Triangulate or
 the   TetGen   modules   as   parameters   to   the   constructor   of
-SimplexGridBuilder  and thus  needs to  adhere to  their corresponding
-license conditions.
+SimplexGridBuilder  and thus  needs to  adhere to  their respective
+license conditions. This package itself is MIT licensed.
+
 

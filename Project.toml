@@ -1,7 +1,7 @@
 name = "SimplexGridFactory"
 uuid = "57bfcd06-606e-45d6-baf4-4ba06da0efd5"
 authors = ["Juergen Fuhrmann <juergen.fuhrmann@wias-berlin.de>"]
-version = "0.5.0"
+version = "0.5.1"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
@@ -9,14 +9,12 @@ ElasticArrays = "fdbdab4c-e67f-52f5-8c3f-e7b388dad3d4"
 ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [compat]
 DocStringExtensions = "^0.8.0"
 ElasticArrays = "^1.2"
 ExtendableGrids = "^0.7.2"
 GridVisualize = "^0.1"
-julia = "^1.5"
+julia = "^1.3"
