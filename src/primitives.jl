@@ -1,3 +1,10 @@
+"""
+```
+circle!(builder, center, radius; n=20)
+```
+
+Add points and facets approximating a circle.
+"""
 function circle!(builder::SimplexGridBuilder, center, radius; n=20)
     points=[point!(builder, center[1]+radius*sin(t),center[2]+radius*cos(t)) for t in range(0,2π,length=n)]
     for i=1:n-1
@@ -8,12 +15,23 @@ function circle!(builder::SimplexGridBuilder, center, radius; n=20)
 end
 
 
+"""
+```
+rect2d!(builder, sw, ne; facetregions=nothing)
+```
+
+Add points and facets describing a rectangle via points describing its
+south-west and north-east corners. On default, the corresponding facet
+regions are deduced from the current facetregion. Alternatively, 
+a 4-vector of facetregions can be passed.
+"""
 function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
+    save_facetregion=builder.current_facetregion
     if isnothing(facetregions)
         facetregions=fill(builder.current_facetregion,4)
     end
     if isa(facetregions,Number)
-        facetregions=ones(4)
+        facetregions=fill(facetregions,4)
     end
     p00=point!(builder,PA[1],PA[2])
     p10=point!(builder,PB[1],PA[2])
@@ -27,16 +45,28 @@ function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     facet!(builder,p11,p01)
     facetregion!(builder,facetregions[4])
     facet!(builder,p01,p00)
+    facetregion!(builder,save_facetregion)
     builder
 end
 
 
+"""
+```
+rect3d!(builder, bsw, tne; facetregions=nothing)
+```
+
+Add points and facets describing a qudrilateral via points describing its
+bottom south-west and top north-east corners. On default, the corresponding facet
+regions are deduced from the current facetregion. Alternatively, 
+a 6-vector of facetregions can be passed (in the sequence s-e-n-w-b-t)
+"""
 function rect3d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
+    save_facetregion=builder.current_facetregion
     if isnothing(facetregions)
         facetregions=fill(builder.current_facetregion,6)
     end
     if isa(facetregions,Number)
-        facetregions=ones(facetregions,6)
+        facetregions=fill(facetregions,6)
     end
     p1=point!(builder,PA[1],PA[2],PA[3])
     p2=point!(builder,PB[1],PA[2],PA[3])
@@ -59,6 +89,7 @@ function rect3d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     facet!(builder,p3 ,p4 ,p8 ,p7)  
     facetregion!(builder,facetregions[6])
     facet!(builder,p4 ,p1 ,p5 ,p8)
+    facetregion!(builder,save_facetregion)
     builder
 end
 
@@ -102,6 +133,13 @@ function refine(coord,tri)
 end
 
 
+"""
+```
+sphere!(builder, center, radius; nref=3)
+```
+
+Add points and facets approximating a sphere. `nref` is a refinement level.
+"""
 function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
     # Initial octahedron
     q=1.0/sqrt(2)

@@ -1,4 +1,4 @@
-#
+<#
 # This test code is released under the license conditions of
 # TetGen.jl and Triangulate.jl
 #
@@ -294,3 +294,25 @@ end;
     @test isa(tetrahedralization_of_cube(),ExtendableGrid)
     @test isa(tet_cube_with_primitives(),ExtendableGrid)
 end;
+
+
+@testset "             primitives" begin
+    function prim2d()
+        builder=SimplexGridBuilder(Generator=Triangulate)
+        rect2d!(builder,[-1,-1], [1,1])
+        circle!(builder, [0,0], 0.25)
+        simplexgrid(builder,maxvolume=0.05)
+    end
+    function prim3d()
+        builder=SimplexGridBuilder(Generator=TetGen)
+        rect3d!(builder,[-1,-1,-1], [1,1,1])
+        sphere!(builder, [0,0,0], 0.25)
+        simplexgrid(builder,maxvolume=0.05)
+    end
+    grid=prim2d()
+    @test (num_nodes(grid),num_cells(grid), num_bfaces(grid))==(106,179,50)
+
+    grid=prim3d()
+    @test (num_nodes(grid),num_cells(grid), num_bfaces(grid))==(423,1787,822)
+
+end
