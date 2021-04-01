@@ -10,6 +10,10 @@ include(examples2d)
 examples3d=joinpath(@__DIR__,"..","examples","examples3d.jl")
 include(examples3d)
 
+zzaccessing=joinpath(@__DIR__,"..","examples","zzaccessing.jl")
+
+
+
 function makeplots(picdir)
     clf()
     builderplot(triangulation_of_domain(), Plotter=PyPlot)
@@ -55,33 +59,34 @@ end
     
 function mkdocs()
 
-    Literate.markdown(examples2d,
-                      example_md_dir,
-                      documenter=false,
-                      info=false)
-
-    Literate.markdown(examples3d,
-                      example_md_dir,
-                      documenter=false,
-                      info=false)
+    generated_examples=[]
+    for example ∈ [examples2d,examples3d,zzaccessing]
+        Literate.markdown(example,
+                          example_md_dir,
+                          documenter=false,
+                          info=false)
+    end
 
 
     
     generated_examples=joinpath.("examples",filter(x->endswith(x, ".md"),readdir(example_md_dir)))
-
+    push!(generated_examples,"pluto.md")
     makeplots(example_md_dir)
     
     makedocs(sitename="SimplexGridFactory.jl",
              modules = [SimplexGridFactory],
              doctest = false,
-             clean = true,
+             clean = false,
              authors = "J. Fuhrmann, Ch. Merdon",
              repo="https://github.com/j-fu/SimplexGridFactory.jl",
              pages=[
                  "Home"=>"index.md",
+                 "API"=>"api.md",
                  "Examples" => generated_examples,
-                 "Pluto Notebook(s)" => "pluto.md"
+                 "Internals"=>"internals.md",
+                 "allindex.md",
              ])
+    @show generated_examples
 end
 
 mkdocs()

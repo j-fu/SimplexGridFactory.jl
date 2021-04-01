@@ -8,6 +8,7 @@ using GridVisualize
 using DocStringExtensions
 using ElasticArrays
 
+include("utils.jl")
 
 include("options.jl")
 export triangleflags,flags!,flags, appendflags!
