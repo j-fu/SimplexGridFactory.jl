@@ -155,7 +155,7 @@ maxvolume!(builder,vol)
 ```
 
 Set the current cell volume resp. area (acts on subsequent regionpoint() calls).
-See [`cellregion`](@ref).
+See [`cellregion!`](@ref).
 """
 maxvolume!(builder::SimplexGridBuilder,vol)=builder.current_cellvolume=vol
  
@@ -167,7 +167,7 @@ regionpoint!(builder,x,y,z)
 regionpoint!(builder,vec_or_tuple)
 ```
 Add a region point marking a region, using current cell volume an cell region
-See [`cellregion`](@ref).
+See [`cellregion!`](@ref).
 """
 function regionpoint!(builder::SimplexGridBuilder,x)
     dim_space(builder)==1||throw(DimensionMismatch())
@@ -250,7 +250,7 @@ facet!(builder,vector_or_tuple)
 ```
 
 Add a facet via the corresponding point indices returned
-by [`point`](@ref). 
+by [`point!`](@ref). 
 
 Facets of two points are solely used for 2D grids. Facets
 with more than two poins are used for 3D grids and must be 
@@ -305,7 +305,7 @@ simplexgrid(builder; kwargs...)
 ```
 
 Build simplex grid from the current state of the builder.
-`kwargs` overwrite those set with the [`options`](@ref) method.
+`kwargs` overwrite those set with the [`options!`](@ref) method.
 See [`default_options`](@ref) for available `kwargs`.
 """
 function ExtendableGrids.simplexgrid(builder::SimplexGridBuilder; kwargs...)

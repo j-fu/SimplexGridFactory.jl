@@ -13,11 +13,8 @@ using LinearAlgebra
 
 # Generated point numbers depend on floating point operations,
 # so we don't insist in exact matches
-function testgrid(grid_or_builder,testdata)
-    grid= (typeof(grid_or_builder) == SimplexGridBuilder) ? simplexgrid(grid_or_builder) : grid_or_builder
-    all(isapprox.((num_nodes(grid),num_cells(grid), num_bfaces(grid)),testdata, rtol=0.1))
-end
-
+testgrid(grid::ExtendableGrid,testdata)= all(isapprox.((num_nodes(grid),num_cells(grid), num_bfaces(grid)),testdata, rtol=0.1))
+testgrid(builder::SimplexGridBuilder,testdata)=testgrid( simplexgrid(builder),testdata)
 
 
 @testset " Basic triangulation 2d" begin
