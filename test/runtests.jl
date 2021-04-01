@@ -1,4 +1,4 @@
-<#
+#
 # This test code is released under the license conditions of
 # TetGen.jl and Triangulate.jl
 #
@@ -9,6 +9,16 @@ using GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra
+
+
+# Generated point numbers depend on floating point operations,
+# so we don't insist in exact matches
+function testgrid(grid_or_builder,testdata)
+    grid= (typeof(grid_or_builder) == SimplexGridBuilder) ? simplexgrid(grid_or_builder) : grid_or_builder
+    all(isapprox.((num_nodes(grid),num_cells(grid), num_bfaces(grid)),testdata, rtol=0.1))
+end
+
+
 
 @testset " Basic triangulation 2d" begin
     function test_ctriangulateio()
@@ -37,10 +47,8 @@ using LinearAlgebra
         cellregions=Vector{Int32}(cellregions)
         
         grid=simplexgrid(points,cells,cellregions,bfaces,bfaceregions)
-        
-        num_nodes(grid)==177 && num_cells(grid)==319 && num_bfaces(grid)==33
     end
-    @test test_ctriangulateio()
+    @test testgrid(test_ctriangulateio(),(177,319,33))
     
     function test_triangulateio()
         triin=Triangulate.TriangulateIO()
@@ -49,9 +57,8 @@ using LinearAlgebra
         triin.segmentmarkerlist=Vector{Int32}([1, 2, 3, 4])
         triin.regionlist=Matrix{Float64}([0.5 0.5 1 0.01;]')
         grid=simplexgrid(SimplexGridFactory.TriangulateType,Triangulate,triin,flags="paAqQ")
-        num_nodes(grid)==177 && num_cells(grid)==319 && num_bfaces(grid)==33
     end
-    @test test_triangulateio()
+    @test testgrid(test_triangulateio(),(177,319,33))
     
 end
 @testset "        BinnedPointList" begin
@@ -107,17 +114,16 @@ end
                          regionpoints=[0.5 0.5;]',
                          regionnumbers=[1],
                          regionvolumes=[0.01];kwargs...)
-        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
     
-    @test test_simplesquare()==(89, 144, 32)
-    @test test_simplesquare(flags="pAaqQD")==(89, 144, 32)
-    @test test_simplesquare(maxvolume=0.05)==(24, 30, 16)
-    @test test_simplesquare(quality=false)==(88, 142, 32)
-    @test test_simplesquare(minangle=30)==(91, 148, 32)
+    @test testgrid(test_simplesquare(),(89, 144, 32))
+    @test testgrid(test_simplesquare(flags="pAaqQD"),(89, 144, 32))
+    @test testgrid(test_simplesquare(maxvolume=0.05),(24, 30, 16))
+    @test testgrid(test_simplesquare(quality=false),(88, 142, 32))
+    @test testgrid(test_simplesquare(minangle=30),(91, 148, 32))
     
     
-    @test test_simplesquare(unsuitable=test_triunsuitable)==(299, 550, 46)
+    @test testgrid(test_simplesquare(unsuitable=test_triunsuitable),(299, 550, 46))
 end
 
 @testset "  SimplexGridBuilder 2d" begin
@@ -144,9 +150,8 @@ end
         facet!(builder,p4,p1)
         
         grid=simplexgrid(builder;kwargs...)
-        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
-    @test test_buildersquare(minangle=30)==(91, 148, 32)
+    @test testgrid(test_buildersquare(minangle=30),(91, 148, 32))
 
     function test_buildersquare1(;kwargs...)
         
@@ -172,9 +177,8 @@ end
         facet!(builder,p4,p1)
         
         grid=simplexgrid(builder;kwargs...)
-    (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
-    @test test_buildersquare1()==(299, 550, 46)
+    @test testgrid(test_buildersquare1(),(299, 550, 46))
 
 end
     
@@ -211,14 +215,13 @@ end
                          regionvolumes=[0.01];
                          kwargs...
                          )
-        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
     
-    @test test_simplecube()==(109, 286, 198)
-    @test test_simplecube(flags="pAaqQD")==(109, 286, 198)
-    @test test_simplecube(maxvolume=0.05)==(50, 68, 96)
+    @test testgrid(test_simplecube(),(109, 286, 198))
+    @test testgrid(test_simplecube(flags="pAaqQD"),(109, 286, 198))
+    @test testgrid(test_simplecube(maxvolume=0.05),(50, 68, 96))
     
-    @test test_simplecube(unsuitable=test_tetunsuitable)==(223, 971, 198)
+    @test testgrid(test_simplecube(unsuitable=test_tetunsuitable),(223, 971, 198))
     
 end
 
@@ -261,21 +264,16 @@ end
         builder=test_buildercube0(;kwargs...)
         grid=simplexgrid(builder;kwargs...)
         
-        (num_nodes(grid),num_cells(grid), num_bfaces(grid))
     end
 
     
     @test SimplexGridFactory.tetgenio(test_buildercube0()) isa RawTetGenIO
-    @test test_buildercube(unsuitable=test_tetunsuitable)==(223, 971, 198)
+    @test testgrid(test_buildercube(unsuitable=test_tetunsuitable),(223, 971, 198))
 
 
     
 end
 
-function testgrid(grid_or_builder,testdata)
-    grid= (typeof(grid_or_builder) == SimplexGridBuilder) ? simplexgrid(grid_or_builder) : grid_or_builder
-    (num_nodes(grid),num_cells(grid), num_bfaces(grid))==testdata
-end
 
     
 @testset "          examples2d.jl" begin    
@@ -291,8 +289,8 @@ end;
 
 @testset "          examples3d.jl" begin    
     include("../examples/examples3d.jl")
-    @test isa(tetrahedralization_of_cube(),ExtendableGrid)
-    @test isa(tet_cube_with_primitives(),ExtendableGrid)
+    @test testgrid(tetrahedralization_of_cube(),(718,2456,1094))
+    @test testgrid(tet_cube_with_primitives(), (5658,27324,6888))
 end;
 
 
@@ -309,10 +307,6 @@ end;
         sphere!(builder, [0,0,0], 0.25)
         simplexgrid(builder,maxvolume=0.05)
     end
-    grid=prim2d()
-    @test (num_nodes(grid),num_cells(grid), num_bfaces(grid))==(106,179,50)
-
-    grid=prim3d()
-    @test (num_nodes(grid),num_cells(grid), num_bfaces(grid))==(423,1787,822)
-
+    @test testgrid(prim2d(), (106,179,50))
+    @test testgrid(prim3d(), (423,1787,822))
 end
