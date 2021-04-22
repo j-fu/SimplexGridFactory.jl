@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>3D Tetrahedralizations · SimplexGridFactory.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">SimplexGridFactory.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><a class="tocitem" href="../../api/">API</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../examples2d/">2D Triangulations</a></li><li class="is-active"><a class="tocitem" href>3D Tetrahedralizations</a><ul class="internal"><li><a class="tocitem" href="#Domain-triangulation"><span>Domain triangulation</span></a></li><li><a class="tocitem" href="#Cube-based-on-primitves"><span>Cube based on primitves</span></a></li></ul></li><li><a class="tocitem" href="../zzaccessing/">Grid data access</a></li><li><a class="tocitem" href="../../pluto/">Pluto Notebook(s)</a></li></ul></li><li><a class="tocitem" href="../../internals/">Internals</a></li><li><a class="tocitem" href="../../allindex/">API Index</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>3D Tetrahedralizations</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>3D Tetrahedralizations</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/j-fu/SimplexGridFactory.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="D-Tetrahedralizations"><a class="docs-heading-anchor" href="#D-Tetrahedralizations">3D Tetrahedralizations</a><a id="D-Tetrahedralizations-1"></a><a class="docs-heading-anchor-permalink" href="#D-Tetrahedralizations" title="Permalink"></a></h1><p>These examples can be loaded into Julia (Revise.jl recommended)</p><p>These examples retur an ExtendableGrid with default simplex grid data.</p><p>The control flags for <a href="https://github.com/JuliaGeometry/TetGen.jl">TetGen</a> are created based on default options provided by this module which try to ensure &quot;good&quot; grids for FEM and FVM computations. These are documented in <a href="examples/@ref"><code>default_options</code></a> Occasional <a href="../../api/#SimplexGridFactory.options!-Tuple{SimplexGridBuilder}"><code>options!</code></a> statements in the examples overwrite these defaults.</p><h2 id="Domain-triangulation"><a class="docs-heading-anchor" href="#Domain-triangulation">Domain triangulation</a><a id="Domain-triangulation-1"></a><a class="docs-heading-anchor-permalink" href="#Domain-triangulation" title="Permalink"></a></h2><p>Here we just describe a domain as a polygon and mesh it. This test code is released under the license conditions of TetGen.jl</p><pre><code class="language-julia">using SimplexGridFactory
+using ExtendableGrids
+using LinearAlgebra
+using TetGen
+
+
+function tetrahedralization_of_cube()
+
+    builder=SimplexGridBuilder(Generator=TetGen)
+
+    p1=point!(builder,0,0,0)
+    p2=point!(builder,1,0,0)
+    p3=point!(builder,1,1,0)
+    p4=point!(builder,0,1,0)
+    p5=point!(builder,0,0,1)
+    p6=point!(builder,1,0,1)
+    p7=point!(builder,1,1,1)
+    p8=point!(builder,0,1,1)
+
+    facetregion!(builder,1)
+    facet!(builder,p1 ,p2 ,p3 ,p4)
+    facetregion!(builder,2)
+    facet!(builder,p5 ,p6 ,p7 ,p8)
+    facetregion!(builder,3)
+    facet!(builder,p1 ,p2 ,p6 ,p5)
+    facetregion!(builder,4)
+    facet!(builder,p2 ,p3 ,p7 ,p6)
+    facetregion!(builder,5)
+    facet!(builder,p3 ,p4 ,p8 ,p7)
+    facetregion!(builder,6)
+    facet!(builder,p4 ,p1 ,p5 ,p8)
+
+    simplexgrid(builder,maxvolume=0.001)
+end</code></pre><p><img src="../tetrahedralization_of_cube.svg" alt/></p><h2 id="Cube-based-on-primitves"><a class="docs-heading-anchor" href="#Cube-based-on-primitves">Cube based on primitves</a><a id="Cube-based-on-primitves-1"></a><a class="docs-heading-anchor-permalink" href="#Cube-based-on-primitves" title="Permalink"></a></h2><p>We can also use predefined primitives to combine geometries</p><pre><code class="language-julia">function tet_cube_with_primitives()
+
+    builder=SimplexGridBuilder(Generator=TetGen)
+    facetregion!(builder,1)
+    cellregion!(builder,1)
+    maxvolume!(builder,0.1)
+    regionpoint!(builder,(0.5,0.5,0.5))
+    rect3d!(builder,(0,0,0), (10,10,10))
+
+    facetregion!(builder, 2)
+    cellregion!(builder,2)
+    maxvolume!(builder,0.05)
+    regionpoint!(builder,(4.5,4.5,4.5))
+    rect3d!(builder,(3,3,3), (5,5,6))
+
+
+    facetregion!(builder, 3)
+    cellregion!(builder,3)
+    maxvolume!(builder,0.025)
+    regionpoint!(builder,(7,7,5))
+    sphere!(builder,(7,7,5),2,nref=3)
+
+    facetregion!(builder, 4)
+    holepoint!(builder, (2,7,5))
+    sphere!(builder,(2,7,5),1.5,nref=3)
+
+    simplexgrid(builder)
+end</code></pre><p><img src="../tet_cube_with_primitives.svg" alt/></p><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../examples2d/">« 2D Triangulations</a><a class="docs-footer-nextpage" href="../zzaccessing/">Grid data access »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 22 April 2021 18:43">Thursday 22 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
