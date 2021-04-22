@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.18
+# v0.14.2
 
 using Markdown
 using InteractiveUtils
@@ -8,8 +8,8 @@ using InteractiveUtils
 begin
 	using Pkg
 	Pkg.activate(mktempdir())
-	Pkg.add(["ExtendableGrids","SimplexGridFactory","PyPlot"])
-	using ExtendableGrids, SimplexGridFactory,PyPlot
+	Pkg.add(["ExtendableGrids","PyPlot", "Triangulate", "GridVisualize","SimplexGridFactory"])
+	using ExtendableGrids,SimplexGridFactory,PyPlot,GridVisualize,Triangulate
 	
 	# Trick pyplot into not using , as floating point decimal delimiter
 	# in certain language enviromnents
@@ -49,7 +49,6 @@ __Local refinement callback:__
 function unsuitable(x1,y1,x2,y2,x3,y3,area)
         bary_x=(x1+x2+x3)/3.0
         bary_y=(y1+y2+y3)/3.0
-	    @show area
         dx=bary_x-center[1]
         dy=bary_y-center[2]
         qdist=dx^2+dy^2
@@ -63,7 +62,7 @@ __Set up a SimplexGridBuilder:__
 
 # ╔═╡ 511b26c6-f920-11ea-1228-51c3750f495c
 function make_builder()
-	factory=SimplexGridBuilder(dim=2)
+	factory=SimplexGridBuilder(Generator=Triangulate)
 	
 	#  Specfy points
 	p1=point!(factory,0,0)
@@ -100,7 +99,7 @@ end
 builder=make_builder()
 
 # ╔═╡ 8f0bd5c0-f920-11ea-3b1c-db90fc95f990
-ExtendableGrids.plot(builder,Plotter=PyPlot,resolution=(600,600))
+builderplot(builder,Plotter=PyPlot,resolution=(600,600))
 
 # ╔═╡ 54677c86-fa91-11ea-3518-3b8aba2c8488
 md"""
