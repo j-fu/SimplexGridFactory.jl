@@ -9,7 +9,7 @@ using GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra
-
+using PyPlot
 
 # Generated point numbers depend on floating point operations,
 # so we don't insist in exact matches
