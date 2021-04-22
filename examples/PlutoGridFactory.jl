@@ -4,16 +4,22 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 53584796-6447-4a4b-acc6-ca4428768a93
+if isdefined(Main, :PlutoRunner)
+	# If this file runs under Pluto, we activate a temporary 
+	# environment and add all necessary packages, including PyPlot
+    using Pkg
+    Pkg.activate(mktempdir())
+	Pkg.add(["PyPlot","Triangulate","GridVisualize","SimplexGridFactory"])
+end
+
 # ╔═╡ d432ad64-f91f-11ea-2e48-4bc7472ac64c
 begin
-	using Pkg
-	Pkg.activate(mktempdir())
-	Pkg.add(["ExtendableGrids","PyPlot", "Triangulate", "GridVisualize","SimplexGridFactory"])
-	using ExtendableGrids,SimplexGridFactory,PyPlot,GridVisualize,Triangulate
-	
-	# Trick pyplot into not using , as floating point decimal delimiter
-	# in certain language enviromnents
-	ENV["LC_NUMERIC"]="C";
+    # Trick pyplot into not using , as floating point decimal delimiter
+    # in certain language enviromnents
+	ENV["LC_NUMERIC"]="C"
+    ENV["MPLBACKEND"]="agg"
+	using SimplexGridFactory,GridVisualize,Triangulate,PyPlot
 	PyPlot.svg(true)
 end;
 
@@ -98,6 +104,11 @@ end
 # ╔═╡ dd85d88e-44b3-11eb-3e31-c7dcbe07d0de
 builder=make_builder()
 
+# ╔═╡ 9735eba3-a51b-4870-8557-c3a2985b2297
+md"""
+__Testplot with input and output__
+"""
+
 # ╔═╡ 8f0bd5c0-f920-11ea-3b1c-db90fc95f990
 builderplot(builder,Plotter=PyPlot,resolution=(600,600))
 
@@ -109,9 +120,18 @@ These are the Triangle control flags created from the default options:
 # ╔═╡ 1067166c-451f-11eb-2916-c94382a220a3
 SimplexGridFactory.makeflags(builder.options,:triangle)
 
+# ╔═╡ d2129483-285b-49a2-a11d-886956146b85
+md"""
+__Create a simplex grid from the builder__
+"""
+
+# ╔═╡ ac93589b-6315-4677-9542-c0a2333f1755
+simplexgrid(builder)
+
 # ╔═╡ Cell order:
 # ╟─940b1996-fe9d-11ea-2fa4-8b72bee62b76
 # ╟─bc6135b8-451f-11eb-106a-2f9c9a8229d7
+# ╠═53584796-6447-4a4b-acc6-ca4428768a93
 # ╠═d432ad64-f91f-11ea-2e48-4bc7472ac64c
 # ╟─f32d9f04-f923-11ea-3a4a-53cc3df5642c
 # ╟─fd27b44a-f923-11ea-2afb-d79f7e62e214
@@ -121,6 +141,9 @@ SimplexGridFactory.makeflags(builder.options,:triangle)
 # ╟─1ae86964-fe9e-11ea-303b-65bb128384a5
 # ╠═511b26c6-f920-11ea-1228-51c3750f495c
 # ╠═dd85d88e-44b3-11eb-3e31-c7dcbe07d0de
+# ╟─9735eba3-a51b-4870-8557-c3a2985b2297
 # ╠═8f0bd5c0-f920-11ea-3b1c-db90fc95f990
 # ╟─54677c86-fa91-11ea-3518-3b8aba2c8488
 # ╠═1067166c-451f-11eb-2916-c94382a220a3
+# ╟─d2129483-285b-49a2-a11d-886956146b85
+# ╠═ac93589b-6315-4677-9542-c0a2333f1755

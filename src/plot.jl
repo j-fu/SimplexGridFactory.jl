@@ -8,6 +8,8 @@ See [`default_options`](@ref) for available `kwargs`.
 """
 builderplot(gb::SimplexGridBuilder; Plotter=nothing,kwargs...)= builderplot(plottertype(Plotter), gb,Plotter;kwargs...)
 
+builderplot(::Type{Nothing}, builder::SimplexGridBuilder, PyPlot ;kwargs...)=nothing
+
 function builderplot(::Type{PyPlotType}, builder::SimplexGridBuilder, PyPlot ;kwargs...)
 
     p=GridVisualizer(Plotter=PyPlot, layout=(1,2); kwargs...)
