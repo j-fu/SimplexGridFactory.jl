@@ -91,7 +91,7 @@ function makeflags(options,mesher)
             flags*="a"
             maxvolume=options[:maxvolume]
             if !isinf(maxvolume)
-                flags*=@sprintf("%f",maxvolume)
+                flags*=@sprintf("%.40f",maxvolume)
             end
         end
         options[:attributes] ? flags*="A" : nothing

@@ -11,7 +11,6 @@ using ElasticArrays
 include("utils.jl")
 
 include("options.jl")
-export triangleflags,flags!,flags, appendflags!
 
 include("binnedpointlist.jl")
 export  BinnedPointList
@@ -20,6 +19,7 @@ include("simplexgridbuilder.jl")
 export SimplexGridBuilder
 export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
 export istriangulate,istetgen
+export flags
 
 include("simplexgrid.jl")
 export simplexgrid

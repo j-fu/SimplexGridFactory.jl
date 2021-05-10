@@ -334,3 +334,13 @@ function ExtendableGrids.simplexgrid(builder::SimplexGridBuilder; kwargs...)
 end
 
 
+function flags(builder::SimplexGridBuilder)
+    if istetgen(builder.Generator)
+        makeflags(builder.options,:tetgen)
+    elseif istriangulate(builder.Generator)
+        makeflags(builder.options,:triangle)
+    else
+        nothing
+    end
+end
+    
