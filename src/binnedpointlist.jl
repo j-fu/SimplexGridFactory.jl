@@ -159,7 +159,7 @@ function _rebin_all_points!(bpl)
 
             # Slightly increase binning region further in order to
             # include all existing points with tolerance
-            delta=bpl.binning_region_max[i]-bpl.binning_region_min[i]
+            delta=max(bpl.binning_region_max[i]-bpl.binning_region_min[i],bpl.tol)
             bpl.binning_region_min[i]-=bpl.binning_region_increase_factor*delta
             bpl.binning_region_max[i]+=bpl.binning_region_increase_factor*delta
         end
