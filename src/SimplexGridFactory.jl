@@ -31,7 +31,7 @@ include("tetgen.jl")
 export SimplexGridBuilder
 
 include("primitives.jl")
-export circle!,rect2d!,rect3d!,sphere!
+export circle!,rect2d!,rect3d!,sphere!,bregions!
 
 include("plot.jl")
 export builderplot

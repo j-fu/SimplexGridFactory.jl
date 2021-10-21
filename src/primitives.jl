@@ -14,6 +14,30 @@ function circle!(builder::SimplexGridBuilder, center, radius; n=20)
     builder
 end
 
+function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=nothing)
+    save_facetregion=builder.current_facetregion
+    if isnothing(facetregions)
+        facetregions=fill(builder.current_facetregion,length(regionlist))
+    end
+    if isa(facetregions,Number)
+        facetregions=fill(facetregions,length(regionlist))
+    end
+    coord=grid[Coordinates]
+    bfnodes=grid[BFaceNodes]
+    bfregions=grid[BFaceRegions]
+
+    for ibface=1:size(bfnodes,2)
+        ireg=findfirst(i->i==bfregions[ibface],regionlist)
+        if ireg!=nothing
+            facetregion!(builder,facetregions[ireg])
+            @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
+            @views p2=point!(builder, coord[:,bfnodes[2,ibface]])
+            facet!(builder,p1,p2)
+        end
+    end
+    facetregion!(builder,save_facetregion)
+end
+
 
 """
 ```
@@ -25,7 +49,7 @@ south-west and north-east corners. On default, the corresponding facet
 regions are deduced from the current facetregion. Alternatively, 
 a 4-vector of facetregions can be passed.
 """
-function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
+function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing, nx=1, ny=1)
     save_facetregion=builder.current_facetregion
     if isnothing(facetregions)
         facetregions=fill(builder.current_facetregion,4)
@@ -37,14 +61,33 @@ function rect2d!(builder::SimplexGridBuilder,PA,PB;facetregions=nothing)
     p10=point!(builder,PB[1],PA[2])
     p11=point!(builder,PB[1],PB[2])
     p01=point!(builder,PA[1],PB[2])
-    facetregion!(builder,facetregions[1])
-    facet!(builder,p00,p10)
-    facetregion!(builder,facetregions[2])
-    facet!(builder,p10,p11)
-    facetregion!(builder,facetregions[3])
-    facet!(builder,p11,p01)
-    facetregion!(builder,facetregions[4])
-    facet!(builder,p01,p00)
+    
+    x=range(PA[1],PB[1],length=nx+1)
+    for i=1:nx
+        facetregion!(builder,facetregions[1])
+        p1=point!(builder,x[i],PA[2])
+        p2=point!(builder,x[i+1],PA[2])
+        facet!(builder,p1,p2)
+
+        facetregion!(builder,facetregions[3])
+        p1=point!(builder,x[i],PB[2])
+        p2=point!(builder,x[i+1],PB[2])
+        facet!(builder,p1,p2)
+    end
+    
+    y=range(PA[2],PB[2],length=ny+1)
+    for i=1:ny
+        facetregion!(builder,facetregions[2])
+        p1=point!(builder,PB[1],y[i])
+        p2=point!(builder,PB[1],y[i+1])
+        facet!(builder,p1,p2)
+
+        facetregion!(builder,facetregions[4])
+        p1=point!(builder,PA[1],y[i])
+        p2=point!(builder,PA[1],y[i+1])
+        facet!(builder,p1,p2)
+    end
+
     facetregion!(builder,save_facetregion)
     builder
 end
