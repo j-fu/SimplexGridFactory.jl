@@ -307,8 +307,10 @@ end;
     @test testgrid(tet_cube_with_primitives(), (5658,27324,6888))
 end;
 
+if !Sys.iswindows()
 @testset "    PlutoGridFactory.jl" begin    
     @test testgrid(include("../examples/PlutoGridFactory.jl"),(272,514,40))
+end
 end
 
 @testset "             primitives" begin
