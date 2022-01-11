@@ -19,6 +19,7 @@ mutable struct SimplexGridBuilder
     regionvolumes::Vector{Cdouble}
     options::Dict{Symbol, Any}
     checkexisting::Bool
+    _savedpoint::Cint
     SimplexGridBuilder(x::Nothing) = new()
 end
 
@@ -78,6 +79,7 @@ function SimplexGridBuilder(;Generator=nothing,tol=1.0e-12,checkexisting=true)
     builder.regionnumbers=[]
     builder.options=default_options()
     builder.checkexisting=checkexisting
+    builder._savedpoint=0
     builder
 end
 
@@ -298,6 +300,25 @@ function facet!(builder::SimplexGridBuilder,p::Union{Vector,Tuple})
     push!(builder.facetregions,builder.current_facetregion)
     length(builder.facets)
 end
+
+
+"""
+```
+polyfacet!(builder,vector_or_tuple)
+```
+
+Add a polygonal facet via the corresponding point indices returned
+by [`point!`](@ref). 
+
+Facets with more than two poins are used for 3D grids and must be 
+planar.
+"""
+function polyfacet!(builder::SimplexGridBuilder,p::Union{Vector,Tuple})
+    push!(builder.facets,[p...])
+    push!(builder.facetregions,builder.current_facetregion)
+    length(builder.facets)
+end
+
 
 """
 ``` 

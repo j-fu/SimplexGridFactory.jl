@@ -17,7 +17,7 @@ export  BinnedPointList
 
 include("simplexgridbuilder.jl")
 export SimplexGridBuilder
-export point!,facet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
+export point!,facet!,polyfacet!, cellregion!, holepoint!,facetregion!,maxvolume!,regionpoint!,options!
 export istriangulate,istetgen
 export flags
 
@@ -31,7 +31,7 @@ include("tetgen.jl")
 export SimplexGridBuilder
 
 include("primitives.jl")
-export circle!,rect2d!,rect3d!,sphere!,bregions!
+export circle!,rect2d!,rect3d!,sphere!,bregions!,moveto!,lineto!
 
 include("plot.jl")
 export builderplot
