@@ -217,6 +217,92 @@ function sphere!(builder::SimplexGridBuilder, center, radius; nref=3)
 end
 
 
+"""
+```
+moveto!(builder, pt)
+```
+
+Move the (virtual) pen to the target point pt (2D, 3D).
+pt is either an existing point index or a table of point coordinates.
+In the latter case, the point is added.
+It returns index of the target point.
+"""
+function moveto!(b::SimplexGridBuilder,pt)
+    local p2,pt2            # index and coordinates of the target point
+    if isa(pt,Array)        # the argument is a table of coordinates
+      pt2 = pt
+      p2  = insert!(b.pointlist, [ pt2[1],pt2[2],pt2[3] ] )
+    elseif isa(pt,Integer)  # the argument is an existing point index
+      p2  = pt 
+    else
+      error("moveto!(): no valid target point")
+      return -1
+    end
+    b._savedpoint = p2      # save the point index to mark the pen position
+    return p2
+end
+
+
+"""
+```
+lineto!(builder, pt)
+```
+
+Generate a line from the current pen position to the target point pt, s `moveto!()`, (2D, 3D).
+pt is either an existing point index or a table of point coordinates.
+In the latter case, the point is added.
+It returns index of the target point.
+
+# Example 2D: draw a square with different facetregion numbers
+```
+ moveto!(b,[0,0])
+ facetregion!(b,1);  p = lineto!(b,[1,0])
+ facetregion!(b,2);  lineto!(b,[1,1])
+ facetregion!(b,3);  lineto!(b,[0,1])
+ facetregion!(b,4);  lineto!(b,p)
+```
+
+# Example 3D: two planar facet
+```
+ facetregion!(b,1);
+ moveto!(b,[0,0,0])
+ p = lineto!(b,[1,0,0])
+ lineto!(b,[1,1,0])
+ lineto!(b,[0,1,0])
+ lineto!(b,p)
+
+ facetregion!(b,2);
+ moveto!(b,[0,0,1])
+ p = lineto!(b,[1,0,1])
+ lineto!(b,[1,1,1])
+ lineto!(b,[0,1,1])
+ lineto!(b,p)
+```
+
+"""
+function lineto!(b::SimplexGridBuilder,pt)
+    local p1 = size(b.pointlist.points,2)  # last index in table points
+    if isa(b._savedpoint,Integer) && b._savedpoint>0 && b._savedpoint<p1 
+      p1 = b._savedpoint
+    end
+    
+    local p2,pt2                           # index and coordinates of the target point
+    if isa(pt,Array)                       # the argument is a table of coordinates
+      pt2 = pt
+      p2  = insert!(b.pointlist,[pt2[1],pt2[2],pt2[3]] )
+    elseif isa(pt,Integer)                 # the argument is an existing point index
+      p2  = pt 
+    else
+      error("lineto!(): no valid target point") 
+      return -1
+    end
+    
+    if p1>0 
+        polyfacet!(b,[p1,p2])
+    end
+    b._savedpoint = p2                     # save the point index to mark the pen position
+    return p2
+end
 
 
 
