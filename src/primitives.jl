@@ -231,7 +231,7 @@ function moveto!(b::SimplexGridBuilder,pt)
     local p2,pt2            # index and coordinates of the target point
     if isa(pt,Array)        # the argument is a table of coordinates
       pt2 = pt
-      p2  = insert!(b.pointlist, [ pt2[1],pt2[2],pt2[3] ] )
+      p2  = insert!(b.pointlist, pt2 )
     elseif isa(pt,Integer)  # the argument is an existing point index
       p2  = pt 
     else
@@ -255,28 +255,28 @@ It returns index of the target point.
 
 # Example 2D: draw a square with different facetregion numbers
 ```
- moveto!(b,[0,0])
- facetregion!(b,1);  p = lineto!(b,[1,0])
+ p = moveto!(b,[0,0])
+ facetregion!(b,1);  lineto!(b,[1,0])
  facetregion!(b,2);  lineto!(b,[1,1])
  facetregion!(b,3);  lineto!(b,[0,1])
  facetregion!(b,4);  lineto!(b,p)
 ```
 
-# Example 3D: two planar facet
+# Example 3D: two planar facet with different facetregion numbers
 ```
  facetregion!(b,1);
- moveto!(b,[0,0,0])
- p = lineto!(b,[1,0,0])
- lineto!(b,[1,1,0])
- lineto!(b,[0,1,0])
- lineto!(b,p)
+ p1 = moveto!(b,[0,0,0])
+ p2 = moveto!(b,[1,0,0])
+ p3 = moveto!(b,[1,1,0])
+ p4 = moveto!(b,[0,1,0])
+ polyfacet!(b,[p1,p2,p3,p4])
 
  facetregion!(b,2);
- moveto!(b,[0,0,1])
- p = lineto!(b,[1,0,1])
- lineto!(b,[1,1,1])
- lineto!(b,[0,1,1])
- lineto!(b,p)
+ p1 = moveto!(b,[0,0,1])
+ p2 = moveto!(b,[1,0,1])
+ p3 = moveto!(b,[1,1,1])
+ p4 = moveto!(b,[0,1,1])
+ polyfacet!(b,[p1,p2,p3,p4])
 ```
 
 """
@@ -289,7 +289,7 @@ function lineto!(b::SimplexGridBuilder,pt)
     local p2,pt2                           # index and coordinates of the target point
     if isa(pt,Array)                       # the argument is a table of coordinates
       pt2 = pt
-      p2  = insert!(b.pointlist,[pt2[1],pt2[2],pt2[3]] )
+      p2  = insert!(b.pointlist,pt2 )
     elseif isa(pt,Integer)                 # the argument is an existing point index
       p2  = pt 
     else
