@@ -11,7 +11,7 @@ Pages = ["options.jl"]
 ```
 
 ## Test plots
-Ccurrently only for PyPlot. For plotting
+Currently only for PyPlot. For plotting
 grids, see [GridVisualize.jl](https://github.com/j-fu/GridVisualize.jl).
 
 ```@autodocs

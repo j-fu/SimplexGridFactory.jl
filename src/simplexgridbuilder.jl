@@ -235,7 +235,7 @@ holepoint!(builder::SimplexGridBuilder, p::Union{Vector,Tuple})=holepoint!(build
 facetregion!(builder,region)
 ```
 Set the current facet region. Subsequent facets will be marked with this number.
-Facet regions can be used to mark different parts ot the boundary, e.g. for
+Facet regions can be used to mark different parts of the boundary, e.g. for
 distinguishing boundary conditions.
 """
 facetregion!(builder::SimplexGridBuilder,i)=builder.current_facetregion=i
