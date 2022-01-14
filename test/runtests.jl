@@ -320,12 +320,84 @@ end
         circle!(builder, [0,0], 0.25)
         simplexgrid(builder,maxvolume=0.05)
     end
+    function prim2d_lineto()
+        b = SimplexGridBuilder(Generator=Triangulate)
+        p = moveto!(b,[0,0])
+        facetregion!(b,1);  lineto!(b,[1,0])
+        facetregion!(b,2);  lineto!(b,[1,1])
+        facetregion!(b,3);  lineto!(b,[0,1])
+        facetregion!(b,4);  lineto!(b,p)
+        simplexgrid(b,maxvolume=0.05)
+    end
     function prim3d()
         builder=SimplexGridBuilder(Generator=TetGen)
         rect3d!(builder,[-1,-1,-1], [1,1,1])
         sphere!(builder, [0,0,0], 0.25)
         simplexgrid(builder,maxvolume=0.05)
     end
+    function prim3d_moveto()
+        b = SimplexGridBuilder(Generator=TetGen)
+
+        c1=[0,0,0]
+        c2=[1,0,0]
+        c3=[1,1,0]
+        c4=[0,1,0]
+        
+        c5=[0,0,1]
+        c6=[1,0,1]
+        c7=[1,1,1]
+        c8=[0,1,1]
+        
+        facetregion!(b,1);
+        p1=moveto!(b,c1)
+        p2=moveto!(b,c2)
+        p3=moveto!(b,c3)
+        p4=moveto!(b,c4)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        facetregion!(b,2);
+        p1=moveto!(b,c5)
+        p2=moveto!(b,c6)
+        p3=moveto!(b,c7)
+        p4=moveto!(b,c8)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        facetregion!(b,3);
+        p1=moveto!(b,c1)
+        p2=moveto!(b,c2)
+        p3=moveto!(b,c6)
+        p4=moveto!(b,c5)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        facetregion!(b,4);
+        p1=moveto!(b,c2)
+        p2=moveto!(b,c3)
+        p3=moveto!(b,c7)
+        p4=moveto!(b,c6)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        facetregion!(b,5);
+        p1=moveto!(b,c3)
+        p2=moveto!(b,c4)
+        p3=moveto!(b,c8)
+        p4=moveto!(b,c7)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        facetregion!(b,6);
+        p1=moveto!(b,c1)
+        p2=moveto!(b,c4)
+        p3=moveto!(b,c8)
+        p4=moveto!(b,c5)
+        polyfacet!(b,[p1,p2,p3,p4])
+        
+        cellregion!(b,1)
+        maxvolume!(b,0.05)
+        regionpoint!(b, (c1+c7)/2 )
+        
+        simplexgrid(b,maxvolume=0.005)        
+    end
     @test testgrid(prim2d(), (106,179,50))
+    @test testgrid(prim2d_lineto(), (24,30,16))
     @test testgrid(prim3d(), (423,1787,822))
+    @test testgrid(prim3d_moveto(), (207,564,368))
 end
