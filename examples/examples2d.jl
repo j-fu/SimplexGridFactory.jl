@@ -260,3 +260,58 @@ end
 #
 
 
+# ## Glueing in another grid
+#
+# The `bregions!` method allows to extract parts of the geometry description from
+# an already existing grid.
+# 
+function  glue_2d()
+    b=SimplexGridBuilder(Generator=Triangulate)
+    
+    h=0.25
+    X=0:h:10
+    Y=0:h:4
+    
+    grid1=simplexgrid(X,Y)
+    bfacemask!(grid1,[0,2],[10,2],7)
+    cellmask!(grid1,[0,0],[10,2],2)
+    
+    
+    xmin=-2
+    x0min=0
+    x0max=10
+    xmax=12
+    y0min=0
+    ymin=-2
+    y0max=4
+    ymax=6
+    facetregion!(b,8)
+    facet!(b,(xmin,ymin), (xmax,ymin))
+    facet!(b,(xmax,ymin), (xmax,2))
+    facet!(b,(xmax,2), (xmax,ymax))
+    facet!(b,(xmin,ymax), (xmax,ymax))
+    facet!(b,(xmin,ymin), (xmin,2))
+    facet!(b,(xmin,2), (xmin,ymax))
+    
+    facetregion!(b,7)
+    facet!(b,(x0min,2),(xmin,2))
+    facet!(b,(x0max,2),(xmax,2))
+
+    cellregion!(b,1)
+    regionpoint!(b,5,5)
+
+
+    cellregion!(b,2)
+    regionpoint!(b,5,-1)
+    
+    holepoint!(b,5,2)
+    
+    bregions!(b,grid1,1:6)
+    grid2=simplexgrid(b,maxvolume=0.6)
+    grid2=glue(grid1,grid2)
+end
+#
+# ![](glue_2d.svg)
+#
+
+

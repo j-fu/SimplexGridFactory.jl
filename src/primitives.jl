@@ -14,6 +14,32 @@ function circle!(builder::SimplexGridBuilder, center, radius; n=20)
     builder
 end
 
+
+"""
+```
+bregions!(builder::SimplexGridBuilder,grid, pairs...)
+```
+Add  boundary facets of `grid`  with region numbers mentioned as first element in `pairs`
+with region number mentioned as second element of `pairs` to the geometry description. 
+
+
+Example:
+
+```
+bregions!(builde,grid, 1=>2, 3=>5)
+```
+"""
+bregions!(builder::SimplexGridBuilder,grid, pairs...)=bregions!(builder,grid,first.(pairs); facetregions=last.(pairs))
+
+
+"""
+```
+bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=nothing)
+```
+Add all boundary facets of `grid` with region numbers in region list  to geometry description.
+The optional parameter `facetregions` allows to overwrite the numbers in `regionlist`.
+
+"""
 function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=nothing)
     save_facetregion=builder.current_facetregion
     if isnothing(facetregions)
@@ -25,16 +51,27 @@ function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=noth
     coord=grid[Coordinates]
     bfnodes=grid[BFaceNodes]
     bfregions=grid[BFaceRegions]
-
+    
+    nfacets=0
     for ibface=1:size(bfnodes,2)
         ireg=findfirst(i->i==bfregions[ibface],regionlist)
         if ireg!=nothing
-            facetregion!(builder,facetregions[ireg])
-            @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
-            @views p2=point!(builder, coord[:,bfnodes[2,ibface]])
-            facet!(builder,p1,p2)
+            if dim_space(builder)==2
+                facetregion!(builder,facetregions[ireg])
+                @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
+                @views p2=point!(builder, coord[:,bfnodes[2,ibface]])
+                facet!(builder,p1,p2)
+            else
+                facetregion!(builder,facetregions[ireg])
+                @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
+                @views p2=point!(builder, coord[:,bfnodes[2,ibface]])
+                @views p3=point!(builder, coord[:,bfnodes[3,ibface]])
+                facet!(builder,p1,p2,p3)
+            end
+            nfacets+=1
         end
     end
+    @info "bregions!: added $nfacets facets to builder"
     facetregion!(builder,save_facetregion)
 end
 

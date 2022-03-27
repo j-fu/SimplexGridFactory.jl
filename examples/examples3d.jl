@@ -88,3 +88,37 @@ function tet_cube_with_primitives()
 end
 
 # ![](tet_cube_with_primitives.svg)
+
+
+
+# ## Glue-in of existing grid
+#
+# The `bregions!` method allows to extract parts of the geometry description from
+# an already existing grid.
+#
+function glue_3d()
+    h0=1.0
+    X0=-2:h0:12
+    Z0=-2:h0:6    
+    g0=simplexgrid(X0,X0,Z0)
+    
+    
+    h=0.25
+    X=0:h:10
+    Z=0:h:4
+    
+    grid3=simplexgrid(X,X,Z)
+    b=SimplexGridBuilder(Generator=TetGen)
+    
+    bregions!(b,g0,1:6;facetregions=[8 for i=1:7])
+    cellregion!(b,2)
+    regionpoint!(b,(-1,-1,-1))
+    
+    bregions!(b,grid3,1:6)
+    holepoint!(b,(5,5,2))
+    gouter=simplexgrid(b,maxvolume=0.4,nosteiner=true)
+    glue(gouter,grid3,g1regions=1:6,interface=7)
+end
+#
+# ![](glue_3d.svg)
+#

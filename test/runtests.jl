@@ -299,12 +299,14 @@ end
     @test testgrid(square_localref(),(299, 550, 46))
     @test testgrid(direct_square(),(89, 144, 32))
     @test testgrid(swiss_cheese_2d(),(1475, 2526,496))
+    @test testgrid(glue_2d(),(846, 1642,94))
 end;
 
 @testset "          examples3d.jl" begin    
     include("../examples/examples3d.jl")
     @test testgrid(tetrahedralization_of_cube(),(718,2456,1094))
     @test testgrid(tet_cube_with_primitives(), (5658,27324,6888))
+    @test testgrid(glue_3d(),(29832,173202,13200))
 end;
 
 if !Sys.iswindows()

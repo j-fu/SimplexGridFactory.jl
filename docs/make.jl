@@ -40,8 +40,8 @@ function makeplots(picdir)
     savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
 
     clf()
-    builderplot(swiss_cheese_2d(), Plotter=PyPlot)
-    savefig(joinpath(picdir,"swiss_cheese_2d.svg"))
+    gridplot(glue_2d(), Plotter=PyPlot)
+    savefig(joinpath(picdir,"glue_2d.svg"))
 
     clf()
     gridplot(tetrahedralization_of_cube(), Plotter=PyPlot, zplane=0.5)
@@ -51,7 +51,9 @@ function makeplots(picdir)
     gridplot(tet_cube_with_primitives(), Plotter=PyPlot, zplane=5, azim=47, elev=80, interior=false)
     savefig(joinpath(picdir,"tet_cube_with_primitives.svg"))
 
- 
+    clf()
+    gridplot(glue_3d(), Plotter=PyPlot,azim=0,elev=15,xplanes=[5])
+    savefig(joinpath(picdir,"glue_3d.svg"))
 
 end
 
