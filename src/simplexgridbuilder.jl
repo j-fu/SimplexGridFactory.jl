@@ -131,7 +131,10 @@ function point!(builder::SimplexGridBuilder,x,y,z)
     insert!(builder.pointlist,[x,y,z])
 end
 
-point!(builder::SimplexGridBuilder, p::Union{AbstractVector,Tuple})=point!(builder,p...)
+const PointCoord=Union{AbstractVector,Tuple}
+
+
+point!(builder::SimplexGridBuilder, p::PointCoord)=point!(builder,p...)
 
 
 """
@@ -192,7 +195,7 @@ function regionpoint!(builder::SimplexGridBuilder,x,y,z)
     push!(builder.regionnumbers,builder.current_cellregion)
 end
 
-regionpoint!(builder::SimplexGridBuilder,p::Union{Vector,Tuple})=regionpoint!(builder,p...)
+regionpoint!(builder::SimplexGridBuilder,p::PointCoord)=regionpoint!(builder,p...)
 
 
 """
@@ -229,7 +232,7 @@ function holepoint!(builder::SimplexGridBuilder, x,y,z)
     nothing
 end
 
-holepoint!(builder::SimplexGridBuilder, p::Union{Vector,Tuple})=holepoint!(builder,p...)
+holepoint!(builder::SimplexGridBuilder, p::PointCoord)=holepoint!(builder,p...)
 
 
 """
@@ -249,6 +252,8 @@ facet!(builder,i1)
 facet!(builder,i1,i2)
 facet!(builder,i1,i2,i3,i4)
 facet!(builder,vector_or_tuple)
+facet!(builder, (x1,y1), (x2,y2))
+facet!(builder, (x1,y1,z1), (x2,y2,z2),(x3,y3,z3))
 ```
 
 Add a facet via the corresponding point indices returned
@@ -259,6 +264,7 @@ with more than two poins are used for 3D grids and must be
 planar.
 """
 function facet!(builder::SimplexGridBuilder,i)
+
     dim_space(builder)==1||throw(DimensionMismatch())
     push!(builder.facets,[i])
     push!(builder.facetregions,builder.current_facetregion)
@@ -300,6 +306,12 @@ function facet!(builder::SimplexGridBuilder,p::Union{Vector,Tuple})
     push!(builder.facetregions,builder.current_facetregion)
     length(builder.facets)
 end
+
+
+facet!(builder::SimplexGridBuilder,p1::PointCoord,p2::PointCoord)=facet!(builder,point!(builder,p1),point!(builder,p2)) 
+facet!(builder::SimplexGridBuilder,p1::PointCoord,p2::PointCoord,p3::PointCoord)=facet!(builder,point!(builder,p1),point!(builder,p2),point!(builder,p3)) 
+
+
 
 
 """
