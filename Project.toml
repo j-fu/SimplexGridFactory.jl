@@ -13,7 +13,7 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-DocStringExtensions = "^0.8.0"
+DocStringExtensions = "^0.8.0, 0.9"
 ElasticArrays = "^1.2"
 ExtendableGrids = "0.9.5"
 GridVisualize = "0.2, 0.3,0.4,0.5"
