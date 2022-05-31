@@ -307,6 +307,7 @@ end;
     @test testgrid(tetrahedralization_of_cube(),(718,2456,1094))
     @test testgrid(tet_cube_with_primitives(), (5658,27324,6888))
     @test testgrid(glue_3d(),(29832,173202,13200))
+    @test testgrid(stl_3d(),(4740,13605,9464))
 end;
 
 if !Sys.iswindows()

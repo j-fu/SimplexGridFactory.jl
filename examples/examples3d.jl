@@ -93,7 +93,7 @@ end
 
 # ## Glue-in of existing grid
 #
-# The `bregions!` method allows to extract parts of the geometry description from
+# The [`bregions!`](@ref) method allows to extract parts of the geometry description from
 # an already existing grid.
 #
 function glue_3d()
@@ -121,4 +121,21 @@ function glue_3d()
 end
 #
 # ![](glue_3d.svg)
+#
+
+
+# ## Load STL model
+#
+# The [`model3d!`](@ref) method allows to load an stl model into the builder.
+#
+function stl_3d()
+    modeldir=joinpath(dirname(pathof(TetGen)),"..","test","surfaceModels")
+    modelfile=joinpath(modeldir,"stanford_bunny.stl")
+    b=SimplexGridBuilder(Generator=TetGen)
+    facetregion!(b,2)
+    model3d!(b,modelfile;scale=1/100,translate=(1,1,1),cellregion=3)
+    simplexgrid(b,maxvolume=1.0e-2)
+end
+#
+# ![](stl_3d.svg)
 #

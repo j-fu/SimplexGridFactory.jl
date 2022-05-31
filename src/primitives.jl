@@ -342,5 +342,49 @@ function lineto!(b::SimplexGridBuilder,pt)
 end
 
 
+"""
+    model3d!(builder, filename; translate=(0,0,0), cellregion=0, hole=false)
 
+Load  3D model from file. File formats are those supported by [FileIO.jl](https://github.com/JuliaIO/MeshIO.jl).
+"""
+function model3d!(builder, filename; translate=(0,0,0), scale=1.0, cellregion=0, hole=false)
+    if isa(scale, Number)
+        scale=(scale,scale,scale)
+    end
+        
+
+    mesh=load(filename)
+    ngonpoints=zeros(Int,10)
+    pmax=fill(-floatmax(),3)
+    pmin=fill(floatmax(),3)
+    p=zeros(3)
+    pbary=zeros(3)
+    
+    for ngon in mesh
+        npts=length(ngon)
+        for i=1:npts
+            p[1]=scale[1]*ngon[i][1]+translate[1]
+            p[2]=scale[2]*ngon[i][2]+translate[2]
+            p[3]=scale[3]*ngon[i][3]+translate[3]
+            pbary.+=p
+            pmax.=maximum((pmax,p))
+            pmin.=minimum((pmin,p))
+            ngonpoints[i]=point!(builder,p)
+        end
+        facet!(builder,view(ngonpoints,1:npts)...)
+    end
+    pbary./=3*length(mesh)
+    msg="loaded model from $(filename)"
+    msg*=", added $(length(mesh)) facets in [ $(round.(pmin,digits=5)), $(round.(pmax,digits=5))]"
+    if hole
+        holepoint!(builder,pbary)
+        msg*=", added holepoint $(round.(pbary,digits=5))"
+    elseif cellregion>0
+        cellregion!(builder,cellregion)
+        regionpoint!(builder,pbary)
+        msg*=", added cellregion $cellregion, regionpoint $(round.(pbary,digits=5))"
+    end
+    @info msg
+    nothing
+end
 

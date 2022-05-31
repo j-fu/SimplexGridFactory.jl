@@ -55,6 +55,10 @@ function makeplots(picdir)
     gridplot(glue_3d(), Plotter=PyPlot,azim=0,elev=15,xplanes=[5])
     savefig(joinpath(picdir,"glue_3d.svg"))
 
+    clf()
+    gridplot(stl_3d(), Plotter=PyPlot,xplanes=[5])
+    savefig(joinpath(picdir,"stl_3d.svg"))
+
 end
 
     
@@ -65,7 +69,7 @@ function mkdocs()
     for example ∈ [examples2d,examples3d,zzaccessing]
         Literate.markdown(example,
                           example_md_dir,
-                          documenter=false,
+                          documenter=true,
                           info=false)
     end
 

@@ -7,6 +7,8 @@ using ExtendableGrids
 using GridVisualize
 using DocStringExtensions
 using ElasticArrays
+using FileIO
+using MeshIO
 
 include("utils.jl")
 
@@ -32,6 +34,7 @@ export SimplexGridBuilder
 
 include("primitives.jl")
 export circle!,rect2d!,rect3d!,sphere!,bregions!,moveto!,lineto!
+export model3d!
 
 include("plot.jl")
 export builderplot
