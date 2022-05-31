@@ -34,7 +34,7 @@ export SimplexGridBuilder
 
 include("primitives.jl")
 export circle!,rect2d!,rect3d!,sphere!,bregions!,moveto!,lineto!
-export model3d!
+export model3d!, mesh3d!
 
 include("plot.jl")
 export builderplot

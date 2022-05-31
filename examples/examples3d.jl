@@ -24,7 +24,6 @@ using ExtendableGrids
 using LinearAlgebra
 using TetGen
 
-
 function tetrahedralization_of_cube()
     
     builder=SimplexGridBuilder(Generator=TetGen)
@@ -139,3 +138,4 @@ end
 #
 # ![](stl_3d.svg)
 #
+

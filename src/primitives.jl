@@ -342,18 +342,28 @@ function lineto!(b::SimplexGridBuilder,pt)
 end
 
 
+
 """
     model3d!(builder, filename; translate=(0,0,0), cellregion=0, hole=false)
 
 Load  3D model from file. File formats are those supported by [FileIO.jl](https://github.com/JuliaIO/MeshIO.jl).
 """
-function model3d!(builder, filename; translate=(0,0,0), scale=1.0, cellregion=0, hole=false)
+function model3d!(builder, filename::String; translate=(0,0,0), scale=1.0, cellregion=0, hole=false)
+    mesh=load(filename)
+    mesh3d!(builder,mesh;translate,scale,cellregion,hole,filename)
+end    
+
+
+"""
+      mesh3d!(builder, mesh; translate=(0,0,0), cellregion=0, hole=false)
+
+Incorporate 3d model from mesh. 
+"""
+function mesh3d!(builder, mesh; translate=(0,0,0), scale=1.0, cellregion=0, hole=false, filename="mesh")
     if isa(scale, Number)
         scale=(scale,scale,scale)
     end
         
-
-    mesh=load(filename)
     ngonpoints=zeros(Int,10)
     pmax=fill(-floatmax(),3)
     pmin=fill(floatmax(),3)
