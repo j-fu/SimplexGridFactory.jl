@@ -377,3 +377,61 @@ function flags(builder::SimplexGridBuilder)
     end
 end
     
+
+"""
+     maybewatertight(this::SimplexGridBuilder; bregions=nothing)
+
+Check if facets belonging to boundare regions in bregions are watertight.
+This is based on a nuber of heuristics, only a negative
+answer is definitive.
+"""
+function maybewatertight(this::SimplexGridBuilder; bregions=nothing)
+    maybe=true
+
+    bfaceregions=this.facetregions
+    if bregions==nothing
+        bregions=unique(bfaceregions)
+    end
+    
+    @info "Checking for dangling facets"
+    points=this.pointlist.points
+    facets=this.facets
+    dim=size(points,1)
+    npoints=size(points,2)
+    nfacets=size(facets,1)
+    ptmarkers=zeros(Int,npoints)
+    
+    for ifacet=1:nfacets
+        if bfaceregions[ifacet]∈ bregions
+            for idim=1:dim
+                ptmarkers[facets[ifacet][idim]]+=1
+            end
+        end
+    end
+
+    uptmarkers=unique(ptmarkers)
+    if 1 ∈ uptmarkers
+        maybe=false
+    end
+    
+    if dim==3 && 2 ∈ uptmarkers
+        maybe=false
+    end
+
+    if maybe
+        @info "Maybe description is watertight, but not sure"
+    else
+        @warn "Description is not watertight"
+        for ifacet=1:nfacets
+            if bfaceregions[ifacet]∈ bregions
+                for idim=1:dim
+                    pt=facets[ifacet][idim]
+                    if ptmarkers[pt] < dim
+                        @warn "Dangling facet $ifacet (bregion $(bfaceregions[ifacet]), point $(points[:,pt])"
+                    end
+                end
+            end
+        end
+    end
+    maybe
+end

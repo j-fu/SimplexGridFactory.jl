@@ -35,7 +35,15 @@ function ExtendableGrids.simplexgrid(::Type{TriangulateType},Triangulate, input;
     segmentlist=triout.segmentlist
     
     segmentmarkerlist=triout.segmentmarkerlist
-    
+
+    if size(pointlist,2)==0
+        error("Emtpy list of generated points. May be the geometry description is not watertight ?") |> throw
+    end 
+
+    if size(trianglelist,2)==0
+        error("Emtpy list of generated triangles. May be the geometry description is not watertight ?")|> throw
+    end 
+
     ExtendableGrids.simplexgrid(pointlist,trianglelist,cellregions,segmentlist,segmentmarkerlist)
 end
 

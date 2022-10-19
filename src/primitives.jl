@@ -26,10 +26,12 @@ with region number mentioned as second element of `pairs` to the geometry descri
 Example:
 
 ```
-bregions!(builde,grid, 1=>2, 3=>5)
+bregions!(builder,grid, 1=>2, 3=>5)
 ```
 """
-bregions!(builder::SimplexGridBuilder,grid, pairs...)=bregions!(builder,grid,first.(pairs); facetregions=last.(pairs))
+function bregions!(builder::SimplexGridBuilder,grid, pairs...)
+    bregions!(builder,grid,first.([pairs...]); facetregions=last.([pairs...]))
+end
 
 
 """
@@ -40,7 +42,7 @@ Add all boundary facets of `grid` with region numbers in region list  to geometr
 The optional parameter `facetregions` allows to overwrite the numbers in `regionlist`.
 
 """
-function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=nothing)
+function bregions!(builder::SimplexGridBuilder,grid,regionlist::AbstractArray;facetregions=nothing)
     save_facetregion=builder.current_facetregion
     if isnothing(facetregions)
         facetregions=fill(builder.current_facetregion,length(regionlist))
@@ -52,6 +54,7 @@ function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=noth
     bfnodes=grid[BFaceNodes]
     bfregions=grid[BFaceRegions]
     
+
     nfacets=0
     for ibface=1:size(bfnodes,2)
         ireg=findfirst(i->i==bfregions[ibface],regionlist)
@@ -60,7 +63,12 @@ function bregions!(builder::SimplexGridBuilder,grid,regionlist;facetregions=noth
                 facetregion!(builder,facetregions[ireg])
                 @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
                 @views p2=point!(builder, coord[:,bfnodes[2,ibface]])
-                facet!(builder,p1,p2)
+                if p1==p2
+                    dist=norm(coord[:,bfnodes[1,ibface]]-coord[:,bfnodes[2,ibface]])
+                    error("builder tolerance too large for point distance  $(dist)") |> throw
+                else
+                    facet!(builder,p1,p2)
+                end
             else
                 facetregion!(builder,facetregions[ireg])
                 @views p1=point!(builder, coord[:,bfnodes[1,ibface]])
@@ -346,7 +354,7 @@ end
 """
     model3d!(builder, filename; translate=(0,0,0), cellregion=0, hole=false)
 
-Load  3D model from file. File formats are those supported by [FileIO.jl](https://github.com/JuliaIO/MeshIO.jl).
+Load  3D model from file. File formats are those supported by [MeshIO.jl](https://github.com/JuliaIO/MeshIO.jl).
 """
 function model3d!(builder, filename::String; translate=(0,0,0), scale=1.0, cellregion=0, hole=false)
     mesh=load(filename)
