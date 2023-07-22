@@ -1,7 +1,7 @@
 name = "SimplexGridFactory"
 uuid = "57bfcd06-606e-45d6-baf4-4ba06da0efd5"
 authors = ["Juergen Fuhrmann <juergen.fuhrmann@wias-berlin.de>"]
-version = "0.5.19"
+version = "0.5.20"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
@@ -17,7 +17,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [compat]
 DocStringExtensions = "0.8,0.9"
 ElasticArrays = "^1.2"
-ExtendableGrids = "0.9.5"
+ExtendableGrids = "0.9.5,1"
 FileIO = "1"
 GridVisualize = "0.2, 0.3,0.4,0.5,0.6,1"
 MeshIO = "0.4"
