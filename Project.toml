@@ -1,7 +1,7 @@
 name = "SimplexGridFactory"
 uuid = "57bfcd06-606e-45d6-baf4-4ba06da0efd5"
 authors = ["Juergen Fuhrmann <juergen.fuhrmann@wias-berlin.de>"]
-version = "0.5.20"
+version = "0.6"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
@@ -12,7 +12,10 @@ GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MeshIO = "7269a6da-0436-5bbc-96c2-40638cbb6118"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[weakdeps]
+TetGen = "c5d3f3f7-f850-59f6-8a2e-ffc6dc1317ea"
+Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
 
 [compat]
 DocStringExtensions = "0.8,0.9"
@@ -20,5 +23,13 @@ ElasticArrays = "^1.2"
 ExtendableGrids = "0.9.5,1"
 FileIO = "1"
 GridVisualize = "0.2, 0.3,0.4,0.5,0.6,1"
+LinearAlgebra = "1.6"
 MeshIO = "0.4"
+Printf = "1.6"
+TetGen = "1.4"
+Triangulate = "2.2"
 julia = "^1.6"
+
+[extras]
+TetGen = "c5d3f3f7-f850-59f6-8a2e-ffc6dc1317ea"
+Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
