@@ -11,7 +11,7 @@
 # The control flags for [Triangle](https://github.com/JuliaGeometry/Triangulate.jl)
 # are created based on default options
 # provided by this module which try to ensure "good" grids for
-# FEM and FVM computations. These are documented in [`default_options`](@ref)
+# FEM and FVM computations. These are documented in [`SimplexGridFactory.default_options`](@ref)
 # Occasional [`options!`](@ref) statements in the examples overwrite these defaults.
 #
 #
