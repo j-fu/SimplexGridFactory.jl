@@ -7,23 +7,23 @@
 # in its core is a `Dict{Type,Any}` and the possibility to [dispatch the return type on the key](https://j-fu.github.io/ExtendableGrids.jl/stable/tdict/).
 #
 function extract_2d()
-    builder=SimplexGridBuilder(Generator=Triangulate)
-    
-    p1=point!(builder,0,0)
-    p2=point!(builder,1,0)
-    p3=point!(builder,1,1)
-    p4=point!(builder,0,1)
+    builder = SimplexGridBuilder(; Generator = Triangulate)
 
-    facetregion!(builder,1)
-    facet!(builder,p1,p2)
-    facetregion!(builder,2)
-    facet!(builder,p2,p3)
-    facetregion!(builder,3)
-    facet!(builder,p3,p4)
-    facetregion!(builder,4)
-    facet!(builder,p4,p1)
-    
-    grid=simplexgrid(builder,maxvolume=0.25)
+    p1 = point!(builder, 0, 0)
+    p2 = point!(builder, 1, 0)
+    p3 = point!(builder, 1, 1)
+    p4 = point!(builder, 0, 1)
+
+    facetregion!(builder, 1)
+    facet!(builder, p1, p2)
+    facetregion!(builder, 2)
+    facet!(builder, p2, p3)
+    facetregion!(builder, 3)
+    facet!(builder, p3, p4)
+    facetregion!(builder, 4)
+    facet!(builder, p4, p1)
+
+    grid = simplexgrid(builder; maxvolume = 0.25)
 
     @show grid[Coordinates]
     @show grid[CellNodes]
