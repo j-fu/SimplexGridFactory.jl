@@ -39,37 +39,34 @@ The `unsuitable` parameter should be a function, see
 [`triunsuitable`](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.triunsuitable-Tuple{Function}) .
 
 """
-default_options()=Dict{Symbol,Any}(
-    :PLC          => true, 
-    :refine       => false, 
-    :quality      => true,
-    :minangle     => 20,
-    :volumecontrol=> true,  
-    :maxvolume    => Inf,
-    :attributes   => true,  
-    :confdelaunay => true,  
-    :optlevel     => 1,     
-    :nosteiner    => false, 
-    :quiet        => true,  
-    :verbose      => false, 
-    :debugfacets  => true,  
-    :check        => false, 
-    :unsuitable   => nothing,
-    :flags        => nothing,
-    :addflags     => "")
-
-
+default_options() = Dict{Symbol, Any}(:PLC => true,
+                                      :refine => false,
+                                      :quality => true,
+                                      :minangle => 20,
+                                      :volumecontrol => true,
+                                      :maxvolume => Inf,
+                                      :attributes => true,
+                                      :confdelaunay => true,
+                                      :optlevel => 1,
+                                      :nosteiner => false,
+                                      :quiet => true,
+                                      :verbose => false,
+                                      :debugfacets => true,
+                                      :check => false,
+                                      :unsuitable => nothing,
+                                      :flags => nothing,
+                                      :addflags => "")
 
 function blendoptions!(opt; kwargs...)
-    for (k,v) in kwargs
-        if haskey(opt,Symbol(k))
-            opt[Symbol(k)]=v
+    for (k, v) in kwargs
+        if haskey(opt, Symbol(k))
+            opt[Symbol(k)] = v
         end
     end
 
     if opt[:verbose]
-        for (k,v) in kwargs
-            if !haskey(opt,Symbol(k))
+        for (k, v) in kwargs
+            if !haskey(opt, Symbol(k))
                 println("Warning: ignored kwarg $(k)=$(v) for simplexgrid")
             end
         end
@@ -77,36 +74,35 @@ function blendoptions!(opt; kwargs...)
     opt
 end
 
-
-function makeflags(options,mesher)
+function makeflags(options, mesher)
     if isnothing(options[:flags])
-        flags=""
-        options[:PLC] ? flags*="p" : nothing
-        options[:refine] ? flags*="r" : nothing
+        flags = ""
+        options[:PLC] ? flags *= "p" : nothing
+        options[:refine] ? flags *= "r" : nothing
         if options[:quality]
-            minangle=Float64(options[:minangle])
-            flags*=@sprintf("q%.2f",minangle)
+            minangle = Float64(options[:minangle])
+            flags *= @sprintf("q%.2f", minangle)
         end
         if options[:volumecontrol]
-            flags*="a"
-            maxvolume=options[:maxvolume]
+            flags *= "a"
+            maxvolume = options[:maxvolume]
             if !isinf(maxvolume)
-                flags*=@sprintf("%.40f",maxvolume)
+                flags *= @sprintf("%.40f", maxvolume)
             end
         end
-        options[:attributes] ? flags*="A" : nothing
-        !isnothing(options[:unsuitable]) && mesher==:triangle ? flags*="u" : nothing
-        options[:confdelaunay] ? flags*="D" : nothing
-        if options[:optlevel]>0 && mesher==:tetgen
-            optlevel=options[:optlevel]
-            flags*=@sprintf("O%d",optlevel)
+        options[:attributes] ? flags *= "A" : nothing
+        !isnothing(options[:unsuitable]) && mesher == :triangle ? flags *= "u" : nothing
+        options[:confdelaunay] ? flags *= "D" : nothing
+        if options[:optlevel] > 0 && mesher == :tetgen
+            optlevel = options[:optlevel]
+            flags *= @sprintf("O%d", optlevel)
         end
-        options[:nosteiner] ? flags*="Y" : nothing
-        options[:quiet] ? flags*="Q" : nothing
-        options[:verbose] ? flags*="V" : nothing
-        options[:debugfacets] && mesher==:teten ? flags*="d" : nothing
-        options[:check] ? flags*="C" : nothing
-        flags*=options[:addflags]
+        options[:nosteiner] ? flags *= "Y" : nothing
+        options[:quiet] ? flags *= "Q" : nothing
+        options[:verbose] ? flags *= "V" : nothing
+        options[:debugfacets] && mesher == :teten ? flags *= "d" : nothing
+        options[:check] ? flags *= "C" : nothing
+        flags *= options[:addflags]
     else
         options[:flags]
     end
