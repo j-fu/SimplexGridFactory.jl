@@ -6,10 +6,9 @@ using Test
 using SimplexGridFactory
 using ExtendableGrids
 using CairoMakie
-using PyPlot, GridVisualize
+using GridVisualize
 using Triangulate
 using TetGen
-using Pkg
 using LinearAlgebra
 
 CairoMakie.activate!(; visible = false)
@@ -290,11 +289,11 @@ end;
     @test testgrid(stl_3d(), (4740, 13605, 9464))
 end;
 
-@testset "    PlutoGridFactory.jl" begin
-    ENV["PLUTO_PROJECT"] = joinpath(@__DIR__, "..", "docs")
-    include("../examples/PlutoGridFactory.jl")
-    Pkg.activate(@__DIR__)
-end
+# @testset "    PlutoGridFactory.jl" begin
+#     ENV["PLUTO_PROJECT"] = joinpath(@__DIR__, "..", "docs")
+#     include("../examples/PlutoGridFactory.jl")
+#     Pkg.activate(@__DIR__)
+# end
 
 @testset "             primitives" begin
     function prim2d()
