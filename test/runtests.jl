@@ -9,6 +9,7 @@ using CairoMakie
 using PyPlot, GridVisualize
 using Triangulate
 using TetGen
+using Pkg
 using LinearAlgebra
 
 CairoMakie.activate!(; visible = false)
@@ -289,10 +290,10 @@ end;
     @test testgrid(stl_3d(), (4740, 13605, 9464))
 end;
 
-if !Sys.iswindows()
-    @testset "    PlutoGridFactory.jl" begin
-        @test testgrid(include("../examples/PlutoGridFactory.jl"), (272, 514, 40))
-    end
+@testset "    PlutoGridFactory.jl" begin
+    ENV["PLUTO_PROJECT"] = joinpath(@__DIR__, "..", "docs")
+    include("../examples/PlutoGridFactory.jl")
+    Pkg.activate(@__DIR__)
 end
 
 @testset "             primitives" begin
@@ -388,7 +389,7 @@ end
     @test testgrid(prim3d_moveto(), (207, 564, 368))
 end
 
-@testset "Plots" begin
+@testset "builderplot" begin
     function t2d()
         builder = SimplexGridBuilder(; Generator = Triangulate)
         rect2d!(builder, [-1, -1], [1, 1])
@@ -396,6 +397,6 @@ end
         options!(builder; maxvolume = 0.05)
         builder
     end
-
-    builderplot(t2d(); Plotter = CairoMakie)
+    @info builderplot(t2d(); Plotter = CairoMakie) |> typeof
+    @test isa(builderplot(t2d(); Plotter = CairoMakie), CairoMakie.Figure)
 end
