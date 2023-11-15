@@ -6,10 +6,10 @@ using InteractiveUtils
 
 # ╔═╡ 53584796-6447-4a4b-acc6-ca4428768a93
 begin
-	import Pkg as _Pkg
+    import Pkg as _Pkg
     haskey(ENV, "PLUTO_PROJECT") && _Pkg.activate(ENV["PLUTO_PROJECT"])
-    using CairoMakie, GridVisualize, SimplexGridFactory, GridVisualize, ExtendableGrids,Triangulate,Test
-	CairoMakie.activate!(type="svg", visible=false)
+    using CairoMakie, GridVisualize, SimplexGridFactory, GridVisualize, ExtendableGrids, Triangulate, Test
+    CairoMakie.activate!(; type = "svg", visible = false)
 end
 
 # ╔═╡ 940b1996-fe9d-11ea-2fa4-8b72bee62b76
@@ -115,13 +115,13 @@ __Create a simplex grid from the builder__
 """
 
 # ╔═╡ ac93589b-6315-4677-9542-c0a2333f1755
-sg=simplexgrid(builder)
+sg = simplexgrid(builder)
 
 # ╔═╡ b4a5b527-4294-4f83-af7f-4dc09fe5e2c6
-gridplot(sg,Plotter=CairoMakie)
+gridplot(sg; Plotter = CairoMakie)
 
 # ╔═╡ 971e4884-3c8f-4ddc-8cdd-d2258cee66e4
-@test isa(sg,ExtendableGrids.ExtendableGrid)
+@test isa(sg, ExtendableGrids.ExtendableGrid)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
