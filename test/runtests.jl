@@ -5,10 +5,13 @@
 using Test
 using SimplexGridFactory
 using ExtendableGrids
-using GridVisualize
+using CairoMakie
+using PyPlot, GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra
+
+CairoMakie.activate!(; visible = false)
 
 # Generated point numbers depend on floating point operations,
 # so we don't insist in exact matches
@@ -383,4 +386,16 @@ end
     @test testgrid(prim2d_lineto(), (24, 30, 16))
     @test testgrid(prim3d(), (423, 1787, 822))
     @test testgrid(prim3d_moveto(), (207, 564, 368))
+end
+
+@testset "Plots" begin
+    function t2d()
+        builder = SimplexGridBuilder(; Generator = Triangulate)
+        rect2d!(builder, [-1, -1], [1, 1])
+        circle!(builder, [0, 0], 0.25)
+        options!(builder; maxvolume = 0.05)
+        builder
+    end
+
+    builderplot(t2d(); Plotter = CairoMakie)
 end
