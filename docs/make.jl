@@ -79,6 +79,7 @@ function mkdocs()
              repo = "https://github.com/j-fu/SimplexGridFactory.jl",
              pages = [
                  "Home" => "index.md",
+                 "Changes" => "changes.md",
                  "API" => "api.md",
                  "Examples" => generated_examples,
                  "Internals" => "internals.md",
