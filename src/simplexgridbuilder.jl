@@ -49,18 +49,8 @@ function SimplexGridBuilder(; Generator = nothing, tol = 1.0e-12, checkexisting 
 
     if istetgen(Generator)
         dim = 3
-        # Heuristic version test via expected features. This could be made
-        # into a real test for later versions were we can have a constant TetGen.TetGenVersion
-        # for this purpose.
-        # Testing via pkg does not cover all relevant use cases.
-        if !isdefined(Generator, :tetunsuitable)
-            throw(ArgumentError("Outdated TetGen.jl version, need at least v1.1.1"))
-        end
     elseif istriangulate(Generator)
         dim = 2
-        if !isdefined(Generator, :tricircumcenter!)
-            throw(ArgumentError("Outdated Triangulate.jl version, need at least v1.0.1"))
-        end
     else
         throw(ArgumentError("Wrong Generator: SimplexGridBuilder needs Generator=TetGen or Generator=Triangulate as argument"))
     end

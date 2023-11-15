@@ -16,7 +16,7 @@ function ExtendableGrids.simplexgrid(::Type{TetGenType}, TetGen, input; kwargs..
     end
 
     if !isnothing(opts[:unsuitable])
-        TetGen.tetunsuitable(opts[:unsuitable])
+        TetGen.tetunsuitable!(opts[:unsuitable])
     end
 
     tetout = TetGen.tetrahedralize(input, flags)

@@ -36,7 +36,7 @@ documentation of the Triangle control flags.
 For the 3D case, see the corresponding [TetGen flags](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.tetrahedralize-Tuple{RawTetGenIO{Float64},String})
 
 The `unsuitable` parameter should be a function, see
-[`triunsuitable`](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.triunsuitable-Tuple{Function}) .
+[`triunsuitable!`](https://juliageometry.github.io/TetGen.jl/stable/#TetGen.triunsuitable!-Tuple{Function}) .
 
 """
 default_options() = Dict{Symbol, Any}(:PLC => true,

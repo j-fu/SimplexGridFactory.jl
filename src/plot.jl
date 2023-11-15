@@ -30,7 +30,7 @@ function builderplot(builder::SimplexGridBuilder, Plotter::Module; resolution = 
     end
 
     if !isnothing(opts[:unsuitable])
-        Triangulate.triunsuitable(opts[:unsuitable])
+        Triangulate.triunsuitable!(opts[:unsuitable])
     end
 
     triout, vorout = Triangulate.triangulate(flags, triin)
