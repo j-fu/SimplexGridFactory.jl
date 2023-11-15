@@ -6,7 +6,6 @@ using LinearAlgebra: norm
 using ElasticArrays: ElasticArray
 import ExtendableGrids
 using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions
-using GridVisualize: PyPlotType, plottertype, MakieType, GridVisualizer
 using DocStringExtensions: SIGNATURES, TYPEDEF, TYPEDSIGNATURES
 using FileIO: load
 import MeshIO

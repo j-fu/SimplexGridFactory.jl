@@ -5,13 +5,11 @@ $(TYPEDSIGNATURES)
 Two panel visualization of gridfactory with input and resulting grid
 See [`default_options`](@ref) for available `kwargs`.
 """
-builderplot(gb::SimplexGridBuilder; Plotter = nothing, kwargs...) = builderplot(plottertype(Plotter), gb, Plotter; kwargs...)
+builderplot(gb::SimplexGridBuilder; Plotter = nothing, kwargs...) = builderplot(gb, Plotter; kwargs...)
 
-builderplot(::Type{Nothing}, builder::SimplexGridBuilder, PyPlot; kwargs...) = nothing
+builderplot(builder::SimplexGridBuilder, ::Nothing; kwargs...) = nothing
 
-function builderplot(::Type{PyPlotType}, builder::SimplexGridBuilder, PyPlot; kwargs...)
-    p = GridVisualizer(; Plotter = PyPlot, layout = (1, 2), kwargs...)
-
+function builderplot(builder::SimplexGridBuilder, Plotter::Module; resolution = (650, 300), kwargs...)
     opts = blendoptions!(copy(builder.options); kwargs...)
 
     Triangulate = builder.Generator
@@ -36,12 +34,16 @@ function builderplot(::Type{PyPlotType}, builder::SimplexGridBuilder, PyPlot; kw
     end
 
     triout, vorout = Triangulate.triangulate(flags, triin)
-    PyPlot.subplot(121)
-    PyPlot.title("In")
-    Triangulate.plot_triangulateio(PyPlot, triin)
-    PyPlot.subplot(122)
-    PyPlot.title("Out")
-    Triangulate.plot_triangulateio(PyPlot, triout)
-    PyPlot.tight_layout()
-    PyPlot.gcf()
+
+    figure = nothing
+    if Triangulate.ispyplot(Plotter)
+        Plotter.close()
+        Plotter.clf()
+        fig = Plotter.figure(1; dpi = 100)
+        fig.set_size_inches(resolution[1] / 100, resolution[2] / 100; forward = true)
+    end
+    if Triangulate.ismakie(Plotter)
+        figure = Plotter.Figure(; resolution)
+    end
+    Triangulate.plot_in_out(Plotter, triin, triout; figure)
 end
