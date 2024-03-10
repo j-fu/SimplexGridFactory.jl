@@ -2,7 +2,7 @@
 # This test code is released under the license conditions of
 # TetGen.jl and Triangulate.jl
 #
-using Test
+using Test, Aqua
 using SimplexGridFactory
 using ExtendableGrids
 using CairoMakie
@@ -10,6 +10,26 @@ using GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra
+
+if isdefined(Docs,:undocumented_names) # >=1.11
+@testset "undocumented names" begin
+    @test isempty(Docs.undocumented_names(SimplexGridFactory))
+end
+end
+
+
+@testset "Aqua" begin
+    Aqua.test_ambiguities(SimplexGridFactory)
+    Aqua.test_unbound_args(SimplexGridFactory)
+    Aqua.test_undefined_exports(SimplexGridFactory)
+    Aqua.test_project_extras(SimplexGridFactory)
+    Aqua.test_stale_deps(SimplexGridFactory)
+    Aqua.test_deps_compat(SimplexGridFactory)
+    Aqua.test_piracies(SimplexGridFactory, treat_as_own=[simplexgrid])
+    Aqua.test_persistent_tasks(SimplexGridFactory)
+end
+
+
 
 CairoMakie.activate!(; visible = false)
 

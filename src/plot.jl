@@ -9,7 +9,7 @@ builderplot(gb::SimplexGridBuilder; Plotter = nothing, kwargs...) = builderplot(
 
 builderplot(builder::SimplexGridBuilder, ::Nothing; kwargs...) = nothing
 
-function builderplot(builder::SimplexGridBuilder, Plotter::Module; resolution = (650, 300), kwargs...)
+function builderplot(builder::SimplexGridBuilder, Plotter::Module; size = (650, 300), kwargs...)
     opts = blendoptions!(copy(builder.options); kwargs...)
 
     Triangulate = builder.Generator
@@ -40,10 +40,10 @@ function builderplot(builder::SimplexGridBuilder, Plotter::Module; resolution = 
         Plotter.close()
         Plotter.clf()
         fig = Plotter.figure(1; dpi = 100)
-        fig.set_size_inches(resolution[1] / 100, resolution[2] / 100; forward = true)
+        fig.set_size_inches(size[1] / 100, size[2] / 100; forward = true)
     end
     if Triangulate.ismakie(Plotter)
-        figure = Plotter.Figure(; resolution)
+        figure = Plotter.Figure(; size)
     end
     Triangulate.plot_in_out(Plotter, triin, triout; figure)
 end

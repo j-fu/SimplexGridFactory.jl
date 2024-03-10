@@ -299,3 +299,35 @@ end
 #
 # ![](glue_2d.svg)
 #
+
+
+
+# Plot generation
+using GridVisualize
+function generateplots(picdir; Plotter = nothing)
+    if isdefined(Plotter, :Makie)
+        size = (600, 300)
+        Plotter.activate!(; type = "svg", visible = false)
+
+        p = builderplot(triangulation_of_domain(); Plotter, size)
+        Plotter.save(joinpath(picdir, "triangulation_of_domain.svg"),p)
+        
+        p = builderplot(nicer_triangulation_of_domain(); Plotter, size)
+        Plotter.save(joinpath(picdir, "nicer_triangulation_of_domain.svg"),p)
+        
+        p = builderplot(triangulation_of_domain_with_subregions(); Plotter, size)
+        Plotter.save(joinpath(picdir, "triangulation_of_domain_with_subregions.svg"),p)
+
+        p = builderplot(square_localref(); Plotter, size)
+        Plotter.save(joinpath(picdir, "square_localref.svg"),p)
+        
+        p = gridplot(direct_square(); Plotter, size)
+        Plotter.save(joinpath(picdir, "direct_square.svg"),p)
+        
+        p = builderplot(swiss_cheese_2d(); Plotter, size)
+        Plotter.save(joinpath(picdir, "swiss_cheese_2d.svg"),p)
+        
+        p = gridplot(glue_2d(); Plotter, size)
+        Plotter.save(joinpath(picdir, "glue_2d.svg"),p)
+    end
+end

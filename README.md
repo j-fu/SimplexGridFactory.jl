@@ -1,6 +1,7 @@
 [![linux-macos-windows](https://github.com/j-fu/SimplexGridFactory.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/j-fu/SimplexGridFactory.jl/actions/workflows/ci.yml)
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://j-fu.github.io/SimplexGridFactory.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://j-fu.github.io/SimplexGridFactory.jl/dev)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 
 SimplexGridFactory
