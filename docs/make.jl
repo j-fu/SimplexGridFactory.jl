@@ -1,76 +1,25 @@
-ENV["MPLBACKEND"] = "agg"
-using Documenter, SimplexGridFactory, ExtendableGrids, Literate, PyPlot
-using GridVisualize
+using Documenter, SimplexGridFactory, ExtendableGrids
+import PlutoSliderServer
+using GridVisualize, ExampleJuggler
+ENV["MPLBACKEND"]= "agg"
+import CairoMakie, PyPlot
+ExampleJuggler.verbose!(true)
 
-example_md_dir = joinpath(@__DIR__, "src", "examples")
 
-examples2d = joinpath(@__DIR__, "..", "examples", "examples2d.jl")
-include(examples2d)
 
-examples3d = joinpath(@__DIR__, "..", "examples", "examples3d.jl")
-include(examples3d)
-
-zzaccessing = joinpath(@__DIR__, "..", "examples", "zzaccessing.jl")
-
-function makeplots(picdir)
-    clf()
-    builderplot(triangulation_of_domain(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "triangulation_of_domain.svg"))
-
-    clf()
-    builderplot(nicer_triangulation_of_domain(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "nicer_triangulation_of_domain.svg"))
-
-    clf()
-    builderplot(triangulation_of_domain_with_subregions(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "triangulation_of_domain_with_subregions.svg"))
-
-    clf()
-    builderplot(square_localref(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "square_localref.svg"))
-
-    clf()
-    gridplot(direct_square(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "direct_square.svg"))
-
-    clf()
-    builderplot(swiss_cheese_2d(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "swiss_cheese_2d.svg"))
-
-    clf()
-    gridplot(glue_2d(); Plotter = PyPlot)
-    savefig(joinpath(picdir, "glue_2d.svg"))
-
-    clf()
-    gridplot(tetrahedralization_of_cube(); Plotter = PyPlot, zplane = 0.5)
-    savefig(joinpath(picdir, "tetrahedralization_of_cube.svg"))
-
-    clf()
-    gridplot(tet_cube_with_primitives(); Plotter = PyPlot, zplane = 5, azim = 47, elev = 80, interior = false)
-    savefig(joinpath(picdir, "tet_cube_with_primitives.svg"))
-
-    clf()
-    gridplot(glue_3d(); Plotter = PyPlot, azim = 0, elev = 15, xplanes = [5])
-    savefig(joinpath(picdir, "glue_3d.svg"))
-
-    clf()
-    gridplot(stl_3d(); Plotter = PyPlot, xplanes = [5])
-    savefig(joinpath(picdir, "stl_3d.svg"))
-end
+###zzaccessing
 
 function mkdocs()
-    generated_examples = []
-    for example ∈ [examples2d, examples3d, zzaccessing]
-        Literate.markdown(example,
-                          example_md_dir;
-                          documenter = true,
-                          info = false)
-    end
+    cleanexamples()
+    exampledir = joinpath(@__DIR__, "..", "examples")
+    notebookdir = joinpath(@__DIR__, "..", "notebooks")
+    cairo_examples = @docscripts(exampledir,["examples2d.jl"], Plotter=CairoMakie)
+    pyplot_examples = @docscripts(exampledir,["examples3d.jl"], Plotter=PyPlot)
 
-    generated_examples = joinpath.("examples", filter(x -> endswith(x, ".md"), readdir(example_md_dir)))
-    push!(generated_examples, "pluto.md")
-    makeplots(example_md_dir)
+    generated_examples=[cairo_examples..., pyplot_examples...]
+    notebook_examples = @docplutonotebooks(notebookdir, ["gridgenvis.jl","cylinder.jl"], iframe=true, iframe_height="2000px")
 
+    
     makedocs(; sitename = "SimplexGridFactory.jl",
              modules = [SimplexGridFactory],
              doctest = false,
@@ -82,10 +31,13 @@ function mkdocs()
                  "Changes" => "changes.md",
                  "API" => "api.md",
                  "Examples" => generated_examples,
+                 "Notebooks" => notebook_examples,
                  "Internals" => "internals.md",
                  "allindex.md",
              ])
-    @show generated_examples
+
+    cleanexamples()
+
 end
 
 mkdocs()

@@ -131,3 +131,30 @@ end
 #
 # ![](stl_3d.svg)
 #
+
+
+
+# Plot generation
+using GridVisualize
+function generateplots(picdir; Plotter = nothing)
+    if isdefined(Plotter, :gcf)
+        size=(300,300)
+
+        Plotter.clf()
+        gridplot(tetrahedralization_of_cube(); Plotter, size, zplane = 0.5)
+        Plotter.savefig(joinpath(picdir, "tetrahedralization_of_cube.svg"))
+        
+        Plotter.clf()
+        gridplot(tet_cube_with_primitives(); Plotter, size, zplane = 5, azim = 47, elev = 80, interior = false)
+        Plotter.savefig(joinpath(picdir, "tet_cube_with_primitives.svg"))
+        
+        Plotter.clf()
+        gridplot(glue_3d(); Plotter, size, azim = 0, elev = 15, xplanes = [5])
+        Plotter.savefig(joinpath(picdir, "glue_3d.svg"))
+       
+        Plotter.clf()
+        gridplot(stl_3d(); Plotter, size, xplanes = [5])
+        Plotter.savefig(joinpath(picdir, "stl_3d.svg"))
+
+    end
+end

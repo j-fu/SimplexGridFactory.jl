@@ -1,3 +1,8 @@
+"""
+    SimplexGridFactory
+
+$(read(joinpath(@__DIR__,"..","README.md"),String))
+"""
 module SimplexGridFactory
 
 using Printf: @printf, @sprintf
@@ -5,7 +10,7 @@ using LinearAlgebra: norm
 
 using ElasticArrays: ElasticArray
 import ExtendableGrids
-using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions
+using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions, simplexgrid
 using DocStringExtensions: SIGNATURES, TYPEDEF, TYPEDSIGNATURES
 using FileIO: load
 import MeshIO

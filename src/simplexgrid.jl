@@ -1,6 +1,6 @@
 """
 ````
-function simplexgrid(Generator;
+      simplexgrid(Generator;
                      points=Array{Cdouble,2}(undef,0,0),
                      bfaces=Array{Cint,2}(undef,0,0),
                      bfaceregions=Array{Cint,1}(undef,0),

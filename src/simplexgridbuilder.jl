@@ -344,6 +344,11 @@ function ExtendableGrids.simplexgrid(builder::SimplexGridBuilder; kwargs...)
                                 options...)
 end
 
+"""
+    flags(builder)
+
+Return mesh generator specific flag string created from builder options.
+"""
 function flags(builder::SimplexGridBuilder)
     if istetgen(builder.Generator)
         makeflags(builder.options, :tetgen)
