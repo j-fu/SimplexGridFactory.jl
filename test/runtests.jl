@@ -13,10 +13,12 @@ using TetGen
 using LinearAlgebra
 
 
+if VERSION >= v"1.7"
 @testset "explicit imports" begin
     @test ExplicitImports.check_no_implicit_imports(SimplexGridFactory) === nothing
     @test ExplicitImports.check_no_stale_explicit_imports(SimplexGridFactory) === nothing
 end
+end 
 
 if isdefined(Docs,:undocumented_names) # >=1.11
 @testset "undocumented names" begin
