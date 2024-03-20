@@ -5,12 +5,12 @@ $(read(joinpath(@__DIR__,"..","README.md"),String))
 """
 module SimplexGridFactory
 
-using Printf: @sprintf
+using Printf: @printf, @sprintf
 using LinearAlgebra: norm
 
 using ElasticArrays: ElasticArray
 import ExtendableGrids
-using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, simplexgrid
+using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions, simplexgrid
 using DocStringExtensions: SIGNATURES, TYPEDEF, TYPEDSIGNATURES
 using FileIO: load
 import MeshIO
