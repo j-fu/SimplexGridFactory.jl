@@ -1,10 +1,3 @@
-## BinnedPointList
-
-```@autodocs
-Modules = [SimplexGridFactory]
-Pages = ["binnedpointlist.jl"]
-```
-
 ## Mesh generator interface
 
 ```@autodocs

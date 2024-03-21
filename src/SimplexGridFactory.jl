@@ -10,7 +10,7 @@ using LinearAlgebra: norm
 
 using ElasticArrays: ElasticArray
 import ExtendableGrids
-using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions, simplexgrid
+using ExtendableGrids: dim_space, Coordinates, BFaceNodes, BFaceRegions, CellNodes, CellRegions, simplexgrid, BinnedPointList
 using DocStringExtensions: SIGNATURES, TYPEDEF, TYPEDSIGNATURES
 using FileIO: load
 import MeshIO
@@ -18,9 +18,6 @@ import MeshIO
 include("utils.jl")
 
 include("options.jl")
-
-include("binnedpointlist.jl")
-export BinnedPointList
 
 include("simplexgridbuilder.jl")
 export SimplexGridBuilder
