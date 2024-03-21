@@ -14,3 +14,5 @@ SimplexGridBuilder  and thus  needs to  adhere to  their respective
 license conditions. This package itself is MIT licensed.
 
 
+## Recent changes
+Please look up the list of recent [changes](https://j-fu.github.io/SimplexGridFactory.jl/stable/changes)
