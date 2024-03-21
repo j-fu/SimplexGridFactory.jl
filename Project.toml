@@ -19,7 +19,7 @@ Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
 [compat]
 DocStringExtensions = "0.8,0.9"
 ElasticArrays = "^1.2"
-ExtendableGrids = "0.9.5,1"
+ExtendableGrids = "1.4"
 FileIO = "1"
 LinearAlgebra = "1.6"
 MeshIO = "0.4"
