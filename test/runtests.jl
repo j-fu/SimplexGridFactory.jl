@@ -2,7 +2,7 @@
 # This test code is released under the license conditions of
 # TetGen.jl and Triangulate.jl
 #
-using Test, Aqua
+using Test, Aqua, ExplicitImports
 using SimplexGridFactory
 using ExtendableGrids
 using CairoMakie
@@ -10,6 +10,12 @@ using GridVisualize
 using Triangulate
 using TetGen
 using LinearAlgebra
+
+@testset "explicit imports" begin
+    @test ExplicitImports.check_no_implicit_imports(SimplexGridFactory) === nothing
+    @test ExplicitImports.check_no_stale_explicit_imports(SimplexGridFactory) === nothing
+end
+
 
 if isdefined(Docs,:undocumented_names) # >=1.11
 @testset "undocumented names" begin
