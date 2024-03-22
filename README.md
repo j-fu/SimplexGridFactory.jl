@@ -7,11 +7,10 @@
 SimplexGridFactory
 ==================
 
-Provides `SimplexGridBuilder`, a convenience  interface to rhe triangle (via  [Triangulate.jl](https://github.com/JuliaGeometry/Triangulate.jl)) and
+Provides `SimplexGridBuilder`, a convenience  interface to the triangle (via  [Triangulate.jl](https://github.com/JuliaGeometry/Triangulate.jl)) and
 TetGen (via [TetGen.jl](https://github.com/JuliaGeometry/TetGen.jl)) mesh generators.  Code using it  needs to pass the `Triangulate` resp.
 the   `TetGen`   module   as   parameter  to   the   constructor of `SimplexGridBuilder`  and thus  needs to
 adhere to  their respective license conditions. This package itself is MIT licensed.
 
 
-## Recent changes
-Please look up the list of recent [changes](https://j-fu.github.io/SimplexGridFactory.jl/stable/changes)
+## Recent [changes](https://j-fu.github.io/SimplexGridFactory.jl/stable/changes)
