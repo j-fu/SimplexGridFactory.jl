@@ -8,6 +8,7 @@ using InteractiveUtils
 begin
     import Pkg as _Pkg
     haskey(ENV, "PLUTO_PROJECT") && _Pkg.activate(ENV["PLUTO_PROJECT"])
+	using Revise
 	using ExtendableGrids
 	using SimplexGridFactory
 	using GridVisualize
@@ -78,7 +79,7 @@ md"""
 """
 
 # ╔═╡ 3ef68de0-1f52-46a7-8e20-a6f001060d9e
-g_base=glue(g_ring,g_disk,g1regions=[1])
+g_base=glue(g_ring,g_disk,g1regions=[1],naive=false, tol=1.0e-7,strict=true)
 
 # ╔═╡ 8922be39-5e1b-4cbe-82c9-cccd5fc34160
 gridplot(g_base)
@@ -95,7 +96,7 @@ Z=range(0,len,length=nz)
 g_cyl=simplexgrid(g_base,Z,top_offset=2)
 
 # ╔═╡ 8027688a-600f-477c-a581-6bd785a517d6
-gridplot(g_cyl, Plotter=PlutoVista)
+gridplot(g_cyl, Plotter=PlutoVista, zplanes=[5])
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -104,6 +105,7 @@ ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 PlutoVista = "646e1f28-b900-46d7-9d87-d554eb38a413"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SimplexGridFactory = "57bfcd06-606e-45d6-baf4-4ba06da0efd5"
 Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
 
@@ -111,6 +113,7 @@ Triangulate = "f7e6ffb2-c36d-4f8f-a77e-16e897189344"
 ExtendableGrids = "~1.3.1"
 GridVisualize = "~1.5.0"
 PlutoVista = "~1.0.1"
+Revise = "~3.5.14"
 SimplexGridFactory = "~1.0.0"
 Triangulate = "~2.3.2"
 """
@@ -121,7 +124,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "6ea0a77596332aae7856c2f36f5e8e6ba7be719a"
+project_hash = "317448f093e73cc07a675ae6803264f706094f72"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -174,6 +177,12 @@ weakdeps = ["SparseArrays"]
 
     [deps.ChainRulesCore.extensions]
     ChainRulesCoreSparseArraysExt = "SparseArrays"
+
+[[deps.CodeTracking]]
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "c0216e792f518b39b22212127d4a84dc31e4e386"
+uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+version = "1.3.5"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -421,6 +430,12 @@ git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.5.0"
 
+[[deps.JuliaInterpreter]]
+deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
+git-tree-sha1 = "0015726aa3eb28973fbbdbb7ca2ed6396ffe3a23"
+uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
+version = "0.9.30"
+
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
@@ -482,6 +497,12 @@ version = "0.3.27"
 
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[deps.LoweredCodeUtils]]
+deps = ["JuliaInterpreter"]
+git-tree-sha1 = "31e27f0b0bf0df3e3e951bfcc43fe8c730a219f6"
+uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
+version = "2.4.5"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -594,6 +615,12 @@ deps = ["UUIDs"]
 git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.0"
+
+[[deps.Revise]]
+deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "Requires", "UUIDs", "Unicode"]
+git-tree-sha1 = "12aa2d7593df490c407a3bbd8b86b8b515017f3e"
+uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
+version = "3.5.14"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
