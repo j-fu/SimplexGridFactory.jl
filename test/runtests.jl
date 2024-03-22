@@ -11,14 +11,15 @@ using Triangulate
 using TetGen
 using LinearAlgebra
 
-@testset "explicit imports" begin
+
+@testset "ExplicitImports" begin
     @test ExplicitImports.check_no_implicit_imports(SimplexGridFactory) === nothing
     @test ExplicitImports.check_no_stale_explicit_imports(SimplexGridFactory) === nothing
 end
 
 
 if isdefined(Docs,:undocumented_names) # >=1.11
-@testset "undocumented names" begin
+@testset "UndocumentedNames" begin
     @test isempty(Docs.undocumented_names(SimplexGridFactory))
 end
 end
@@ -46,7 +47,7 @@ function testgrid(grid::ExtendableGrid, testdata)
 end
 testgrid(builder::SimplexGridBuilder, testdata) = testgrid(simplexgrid(builder), testdata)
 
-@testset " Basic triangulation 2d" begin
+@testset "Basic triangulation 2d" begin
     function test_ctriangulateio()
         nodes = Matrix{Cdouble}([1.0 0.0; 0.0 1.0; -1.0 0.0; 0.0 -1.0]')
         faces = Matrix{Cint}([1 2; 2 3; 3 4; 4 1]')
@@ -122,7 +123,7 @@ end
     @test testgrid(test_simplesquare(; unsuitable = test_triunsuitable), (299, 550, 46))
 end
 
-@testset "  SimplexGridBuilder 2d" begin
+@testset "SimplexGridBuilder 2d" begin
     function test_buildersquare(; kwargs...)
         builder = SimplexGridBuilder(; Generator = Triangulate)
         cellregion!(builder, 1)
@@ -210,7 +211,7 @@ end
     @test testgrid(test_simplecube(; unsuitable = test_tetunsuitable), (223, 971, 198))
 end
 
-@testset "  SimplexGridBuilder 3d" begin
+@testset "SimplexGridBuilder 3d" begin
     function test_buildercube0(; kwargs...)
         builder = SimplexGridBuilder(; Generator = TetGen)
         cellregion!(builder, 1)
@@ -250,7 +251,7 @@ end
     @test testgrid(test_buildercube(; unsuitable = test_tetunsuitable), (223, 971, 198))
 end
 
-@testset "          examples2d.jl" begin
+@testset "examples2d.jl" begin
     include("../examples/examples2d.jl")
     @test SimplexGridFactory.triangulateio(triangulation_of_domain()) isa TriangulateIO
     @test testgrid(triangulation_of_domain(), (10, 8, 10))
@@ -262,7 +263,7 @@ end
     @test testgrid(glue_2d(), (846, 1642, 94))
 end;
 
-@testset "          examples3d.jl" begin
+@testset "examples3d.jl" begin
     include("../examples/examples3d.jl")
     @test testgrid(tetrahedralization_of_cube(), (718, 2456, 1094))
     @test testgrid(tet_cube_with_primitives(), (5658, 27324, 6888))
@@ -276,7 +277,7 @@ end;
 #     Pkg.activate(@__DIR__)
 # end
 
-@testset "             primitives" begin
+@testset "primitives" begin
     function prim2d()
         builder = SimplexGridBuilder(; Generator = Triangulate)
         rect2d!(builder, [-1, -1], [1, 1])
