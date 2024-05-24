@@ -18,31 +18,7 @@ function ExtendableGrids.simplexgrid(::Type{TriangulateType}, Triangulate, input
     end
 
     triout, vorout = Triangulate.triangulate(flags, input)
-
-    pointlist = triout.pointlist
-
-    trianglelist = triout.trianglelist
-
-    if size(triout.triangleattributelist, 2) == 0
-        # Add default for cellregions if that was not created
-        cellregions = ones(Int32, size(trianglelist, 2))
-    else
-        cellregions = Vector{Int32}(vec(triout.triangleattributelist))
-    end
-
-    segmentlist = triout.segmentlist
-
-    segmentmarkerlist = triout.segmentmarkerlist
-
-    if size(pointlist, 2) == 0
-        error("Emtpy list of generated points. May be the geometry description is not watertight ?") |> throw
-    end
-
-    if size(trianglelist, 2) == 0
-        error("Emtpy list of generated triangles. May be the geometry description is not watertight ?") |> throw
-    end
-
-    ExtendableGrids.simplexgrid(pointlist, trianglelist, cellregions, segmentlist, segmentmarkerlist)
+    ExtendableGrids.simplexgrid(triout)
 end
 
 """

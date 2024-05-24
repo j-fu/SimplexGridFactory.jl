@@ -21,21 +21,7 @@ function ExtendableGrids.simplexgrid(::Type{TetGenType}, TetGen, input; kwargs..
 
     tetout = TetGen.tetrahedralize(input, flags)
 
-    pointlist = tetout.pointlist
-
-    tetrahedronlist = tetout.tetrahedronlist
-
-    if size(tetout.tetrahedronattributelist, 2) == 0
-        cellregions = ones(Int32, size(tetrahedronlist, 2))
-    else
-        cellregions = Vector{Int32}(vec(tetout.tetrahedronattributelist))
-    end
-
-    segmentlist = tetout.trifacelist
-
-    segmentmarkerlist = tetout.trifacemarkerlist
-
-    ExtendableGrids.simplexgrid(pointlist, tetrahedronlist, cellregions, segmentlist, segmentmarkerlist)
+    ExtendableGrids.simplexgrid(tetout)
 end
 
 """
