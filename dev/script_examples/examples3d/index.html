@@ -30,7 +30,7 @@ function tetrahedralization_of_cube()
     facet!(builder, p4, p1, p5, p8)
 
     simplexgrid(builder; maxvolume = 0.001)
-end</code></pre><p><img src="../tetrahedralization_of_cube.svg" alt/></p><h2 id="Cube-based-on-primitves"><a class="docs-heading-anchor" href="#Cube-based-on-primitves">Cube based on primitves</a><a id="Cube-based-on-primitves-1"></a><a class="docs-heading-anchor-permalink" href="#Cube-based-on-primitves" title="Permalink"></a></h2><p>We can also use predefined primitives to combine geometries</p><pre><code class="language-julia hljs">function tet_cube_with_primitives()
+end</code></pre><p><img src="../tetrahedralization_of_cube.png" alt/></p><h2 id="Cube-based-on-primitves"><a class="docs-heading-anchor" href="#Cube-based-on-primitves">Cube based on primitves</a><a id="Cube-based-on-primitves-1"></a><a class="docs-heading-anchor-permalink" href="#Cube-based-on-primitves" title="Permalink"></a></h2><p>We can also use predefined primitives to combine geometries</p><pre><code class="language-julia hljs">function tet_cube_with_primitives()
     builder = SimplexGridBuilder(; Generator = TetGen)
     facetregion!(builder, 1)
     cellregion!(builder, 1)
@@ -55,7 +55,7 @@ end</code></pre><p><img src="../tetrahedralization_of_cube.svg" alt/></p><h2 id=
     sphere!(builder, (2, 7, 5), 1.5; nref = 3)
 
     simplexgrid(builder)
-end</code></pre><p><img src="../tet_cube_with_primitives.svg" alt/></p><h2 id="Glue-in-of-existing-grid"><a class="docs-heading-anchor" href="#Glue-in-of-existing-grid">Glue-in of existing grid</a><a id="Glue-in-of-existing-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Glue-in-of-existing-grid" title="Permalink"></a></h2><p>The <code>bregions!</code> method allows to extract parts of the geometry description from an already existing grid.</p><pre><code class="language-julia hljs">function glue_3d()
+end</code></pre><p><img src="../tet_cube_with_primitives.png" alt/></p><h2 id="Glue-in-of-existing-grid"><a class="docs-heading-anchor" href="#Glue-in-of-existing-grid">Glue-in of existing grid</a><a id="Glue-in-of-existing-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Glue-in-of-existing-grid" title="Permalink"></a></h2><p>The <code>bregions!</code> method allows to extract parts of the geometry description from an already existing grid.</p><pre><code class="language-julia hljs">function glue_3d()
     h0 = 1.0
     X0 = -2:h0:12
     Z0 = -2:h0:6
@@ -76,33 +76,33 @@ end</code></pre><p><img src="../tet_cube_with_primitives.svg" alt/></p><h2 id="G
     holepoint!(b, (5, 5, 2))
     gouter = simplexgrid(b; maxvolume = 0.4, nosteiner = true)
     glue(gouter, grid3; g1regions = 1:6, interface = 7)
-end</code></pre><p><img src="../glue_3d.svg" alt/></p><h2 id="Load-STL-model"><a class="docs-heading-anchor" href="#Load-STL-model">Load STL model</a><a id="Load-STL-model-1"></a><a class="docs-heading-anchor-permalink" href="#Load-STL-model" title="Permalink"></a></h2><p>The <code>model3d!</code> method allows to load an stl model into the builder.</p><pre><code class="language-julia hljs">function stl_3d()
+end</code></pre><p><img src="../glue_3d.png" alt/></p><h2 id="Load-STL-model"><a class="docs-heading-anchor" href="#Load-STL-model">Load STL model</a><a id="Load-STL-model-1"></a><a class="docs-heading-anchor-permalink" href="#Load-STL-model" title="Permalink"></a></h2><p>The <code>model3d!</code> method allows to load an stl model into the builder.</p><pre><code class="language-julia hljs">function stl_3d()
     modeldir = joinpath(dirname(pathof(TetGen)), &quot;..&quot;, &quot;test&quot;, &quot;surfaceModels&quot;)
     modelfile = joinpath(modeldir, &quot;stanford_bunny.stl&quot;)
     b = SimplexGridBuilder(; Generator = TetGen)
     facetregion!(b, 2)
     model3d!(b, modelfile; scale = 1 / 100, translate = (1, 1, 1), cellregion = 3)
     simplexgrid(b; maxvolume = 1.0e-2)
-end</code></pre><p><img src="../stl_3d.svg" alt/></p><p>Plot generation</p><pre><code class="language-julia hljs">using GridVisualize
+end</code></pre><p><img src="../stl_3d.png" alt/></p><p>Plot generation</p><pre><code class="language-julia hljs">using GridVisualize
 function generateplots(picdir; Plotter = nothing)
     if isdefined(Plotter, :gcf)
         size=(300,300)
 
         Plotter.clf()
         gridplot(tetrahedralization_of_cube(); Plotter, size, zplane = 0.5)
-        Plotter.savefig(joinpath(picdir, &quot;tetrahedralization_of_cube.svg&quot;))
+        Plotter.savefig(joinpath(picdir, &quot;tetrahedralization_of_cube.png&quot;))
 
         Plotter.clf()
         gridplot(tet_cube_with_primitives(); Plotter, size, zplane = 5, azim = 47, elev = 80, interior = false)
-        Plotter.savefig(joinpath(picdir, &quot;tet_cube_with_primitives.svg&quot;))
+        Plotter.savefig(joinpath(picdir, &quot;tet_cube_with_primitives.png&quot;))
 
         Plotter.clf()
         gridplot(glue_3d(); Plotter, size, azim = 0, elev = 15, xplanes = [5])
-        Plotter.savefig(joinpath(picdir, &quot;glue_3d.svg&quot;))
+        Plotter.savefig(joinpath(picdir, &quot;glue_3d.png&quot;))
 
         Plotter.clf()
         gridplot(stl_3d(); Plotter, size, xplanes = [5])
-        Plotter.savefig(joinpath(picdir, &quot;stl_3d.svg&quot;))
+        Plotter.savefig(joinpath(picdir, &quot;stl_3d.png&quot;))
 
     end
-end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../examples2d/">« examples2d</a><a class="docs-footer-nextpage" href="../../pluto_examples/gridgenvis/">gridgenvis »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 24 May 2024 14:21">Friday 24 May 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../examples2d/">« examples2d</a><a class="docs-footer-nextpage" href="../../pluto_examples/gridgenvis/">gridgenvis »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Friday 7 June 2024 14:43">Friday 7 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
