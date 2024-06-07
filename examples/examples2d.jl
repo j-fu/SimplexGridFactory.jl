@@ -47,7 +47,7 @@ function triangulation_of_domain()
 end
 
 #
-# ![](triangulation_of_domain.svg)
+# ![](triangulation_of_domain.png)
 #
 
 #
@@ -80,7 +80,7 @@ function nicer_triangulation_of_domain()
     builder
 end
 #
-# ![](nicer_triangulation_of_domain.svg)
+# ![](nicer_triangulation_of_domain.png)
 #
 
 # ## Triangulation with subregions
@@ -120,7 +120,7 @@ function triangulation_of_domain_with_subregions()
     builder
 end
 #
-# ![](triangulation_of_domain_with_subregions.svg)
+# ![](triangulation_of_domain_with_subregions.png)
 #
 
 # ## Direct specification of input arrays
@@ -138,7 +138,7 @@ function direct_square(Generator = Triangulate)
                 regionvolumes = [0.01])
 end
 #
-# ![](direct_square.svg)
+# ![](direct_square.png)
 #
 
 # ## Local refinement
@@ -179,7 +179,7 @@ function square_localref()
     builder
 end
 #
-# ![](square_localref.svg)
+# ![](square_localref.png)
 #
 
 # ## Domain with holes
@@ -245,7 +245,7 @@ function swiss_cheese_2d()
     builder
 end
 #
-# ![](swiss_cheese_2d.svg)
+# ![](swiss_cheese_2d.png)
 #
 
 # ## Glueing in another grid
@@ -297,7 +297,7 @@ function glue_2d()
     grid2 = glue(grid1, grid2)
 end
 #
-# ![](glue_2d.svg)
+# ![](glue_2d.png)
 #
 
 
@@ -307,27 +307,27 @@ using GridVisualize
 function generateplots(picdir; Plotter = nothing)
     if isdefined(Plotter, :Makie)
         size = (600, 300)
-        Plotter.activate!(; type = "svg", visible = false)
+        Plotter.activate!(; type = "png", visible = false)
 
         p = builderplot(triangulation_of_domain(); Plotter, size)
-        Plotter.save(joinpath(picdir, "triangulation_of_domain.svg"),p)
+        Plotter.save(joinpath(picdir, "triangulation_of_domain.png"),p)
         
         p = builderplot(nicer_triangulation_of_domain(); Plotter, size)
-        Plotter.save(joinpath(picdir, "nicer_triangulation_of_domain.svg"),p)
+        Plotter.save(joinpath(picdir, "nicer_triangulation_of_domain.png"),p)
         
         p = builderplot(triangulation_of_domain_with_subregions(); Plotter, size)
-        Plotter.save(joinpath(picdir, "triangulation_of_domain_with_subregions.svg"),p)
+        Plotter.save(joinpath(picdir, "triangulation_of_domain_with_subregions.png"),p)
 
         p = builderplot(square_localref(); Plotter, size)
-        Plotter.save(joinpath(picdir, "square_localref.svg"),p)
+        Plotter.save(joinpath(picdir, "square_localref.png"),p)
         
         p = gridplot(direct_square(); Plotter, size)
-        Plotter.save(joinpath(picdir, "direct_square.svg"),p)
+        Plotter.save(joinpath(picdir, "direct_square.png"),p)
         
         p = builderplot(swiss_cheese_2d(); Plotter, size)
-        Plotter.save(joinpath(picdir, "swiss_cheese_2d.svg"),p)
+        Plotter.save(joinpath(picdir, "swiss_cheese_2d.png"),p)
         
         p = gridplot(glue_2d(); Plotter, size)
-        Plotter.save(joinpath(picdir, "glue_2d.svg"),p)
+        Plotter.save(joinpath(picdir, "glue_2d.png"),p)
     end
 end

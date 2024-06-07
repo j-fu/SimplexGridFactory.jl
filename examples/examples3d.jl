@@ -51,7 +51,7 @@ function tetrahedralization_of_cube()
 
     simplexgrid(builder; maxvolume = 0.001)
 end
-# ![](tetrahedralization_of_cube.svg)
+# ![](tetrahedralization_of_cube.png)
 
 # ## Cube based on primitves
 #
@@ -83,7 +83,7 @@ function tet_cube_with_primitives()
     simplexgrid(builder)
 end
 
-# ![](tet_cube_with_primitives.svg)
+# ![](tet_cube_with_primitives.png)
 
 # ## Glue-in of existing grid
 #
@@ -113,7 +113,7 @@ function glue_3d()
     glue(gouter, grid3; g1regions = 1:6, interface = 7)
 end
 #
-# ![](glue_3d.svg)
+# ![](glue_3d.png)
 #
 
 # ## Load STL model
@@ -129,7 +129,7 @@ function stl_3d()
     simplexgrid(b; maxvolume = 1.0e-2)
 end
 #
-# ![](stl_3d.svg)
+# ![](stl_3d.png)
 #
 
 
@@ -142,19 +142,19 @@ function generateplots(picdir; Plotter = nothing)
 
         Plotter.clf()
         gridplot(tetrahedralization_of_cube(); Plotter, size, zplane = 0.5)
-        Plotter.savefig(joinpath(picdir, "tetrahedralization_of_cube.svg"))
+        Plotter.savefig(joinpath(picdir, "tetrahedralization_of_cube.png"))
         
         Plotter.clf()
         gridplot(tet_cube_with_primitives(); Plotter, size, zplane = 5, azim = 47, elev = 80, interior = false)
-        Plotter.savefig(joinpath(picdir, "tet_cube_with_primitives.svg"))
+        Plotter.savefig(joinpath(picdir, "tet_cube_with_primitives.png"))
         
         Plotter.clf()
         gridplot(glue_3d(); Plotter, size, azim = 0, elev = 15, xplanes = [5])
-        Plotter.savefig(joinpath(picdir, "glue_3d.svg"))
+        Plotter.savefig(joinpath(picdir, "glue_3d.png"))
        
         Plotter.clf()
         gridplot(stl_3d(); Plotter, size, xplanes = [5])
-        Plotter.savefig(joinpath(picdir, "stl_3d.svg"))
+        Plotter.savefig(joinpath(picdir, "stl_3d.png"))
 
     end
 end
