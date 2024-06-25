@@ -371,8 +371,12 @@ function mesh3d!(builder, mesh; translate = (0, 0, 0), scale = 1.0, cellregion =
             p[2] = scale[2] * ngon[i][2] + translate[2]
             p[3] = scale[3] * ngon[i][3] + translate[3]
             pbary .+= p
-            pmax .= maximum((pmax, p))
-            pmin .= minimum((pmin, p))
+            pmax[1]=max(pmax[1],p[1])
+            pmax[2]=max(pmax[2],p[2])
+            pmax[3]=max(pmax[3],p[3])
+            pmin[1]=min(pmin[1],p[1])
+            pmin[2]=min(pmin[2],p[2])
+            pmin[3]=min(pmin[3],p[3])
             ngonpoints[i] = point!(builder, p)
         end
         facet!(builder, view(ngonpoints, 1:npts)...)
