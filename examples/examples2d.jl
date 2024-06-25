@@ -248,6 +248,22 @@ end
 # ![](swiss_cheese_2d.png)
 #
 
+
+# ## Remeshing another grid
+#
+# The `bregions!` method allows to use another grid as geometry description
+# 
+function remesh_2d()
+    b = SimplexGridBuilder(; Generator = Triangulate)
+    X=0:0.1:1
+    grid1 = simplexgrid(X, X)
+    bregions!(b,grid1)
+    simplexgrid(b,maxvolume=0.01)
+end
+#
+# ![](remesh_2d.png)
+#
+
 # ## Glueing in another grid
 #
 # The `bregions!` method allows to extract parts of the geometry description from
@@ -327,6 +343,9 @@ function generateplots(picdir; Plotter = nothing)
         p = builderplot(swiss_cheese_2d(); Plotter, size)
         Plotter.save(joinpath(picdir, "swiss_cheese_2d.png"),p)
         
+        p = gridplot(remesh_2d(); Plotter, size)
+        Plotter.save(joinpath(picdir, "remesh_2d.png"),p)
+
         p = gridplot(glue_2d(); Plotter, size)
         Plotter.save(joinpath(picdir, "glue_2d.png"),p)
     end

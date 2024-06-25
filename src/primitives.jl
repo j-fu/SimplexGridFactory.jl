@@ -20,7 +20,7 @@ bregions!(builder::SimplexGridBuilder,grid, pairs...)
 ```
 Add  boundary facets of `grid`  with region numbers mentioned as first element in `pairs`
 with region number mentioned as second element of `pairs` to the geometry description. 
-
+If no pairs are given, add  all boundary facets of `grid`  with their original region numbers to builder.
 
 Example:
 
@@ -29,8 +29,15 @@ bregions!(builder,grid, 1=>2, 3=>5)
 ```
 """
 function bregions!(builder::SimplexGridBuilder, grid, pairs...)
-    bregions!(builder, grid, first.([pairs...]); facetregions = last.([pairs...]))
+    if length([pairs...])>0
+        bregions!(builder, grid, first.([pairs...]); facetregions = last.([pairs...]))
+    else
+        cr=unique(grid[BFaceRegions])
+        bregions!(builder, grid, cr; facetregions=cr)
+    end
 end
+
+
 
 """
 ```
