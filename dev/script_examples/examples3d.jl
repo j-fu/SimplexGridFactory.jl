@@ -85,6 +85,25 @@ end
 
 # ![](tet_cube_with_primitives.png)
 
+
+
+# ## Remeshing another grid
+#
+# The `bregions!` method allows to use another grid as geometry description
+# 
+function remesh_3d()
+    b = SimplexGridBuilder(; Generator = TetGen)
+    X=0:0.1:1
+    grid1 = simplexgrid(X, X, X)
+    bregions!(b,grid1)
+    simplexgrid(b,maxvolume=0.0001)
+end
+#
+# ![](remesh_3d.png)
+#
+
+
+
 # ## Glue-in of existing grid
 #
 # The [`bregions!`](@ref) method allows to extract parts of the geometry description from
@@ -151,6 +170,10 @@ function generateplots(picdir; Plotter = nothing)
         Plotter.clf()
         gridplot(glue_3d(); Plotter, size, azim = 0, elev = 15, xplanes = [5])
         Plotter.savefig(joinpath(picdir, "glue_3d.png"))
+       
+        Plotter.clf()
+        gridplot(remesh_3d(); Plotter, size, zplanes = [0.5])
+        Plotter.savefig(joinpath(picdir, "remesh_3d.png"))
        
         Plotter.clf()
         gridplot(stl_3d(); Plotter, size, xplanes = [5])
